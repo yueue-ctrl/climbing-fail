@@ -140,7 +140,10 @@ export default function Home() {
         <div className="overlay" role="dialog" aria-modal="true" aria-label="GIF details"
           onMouseDown={(event) => event.target === event.currentTarget && setSelected(null)}>
           <article className="detail">
-            <button className="close" onClick={() => setSelected(null)} aria-label="Close">×</button>
+            <button className="close" type="button" onClick={(event) => {
+              event.stopPropagation();
+              setSelected(null);
+            }} aria-label="Close">×</button>
             <img src={selected.url} alt="Looping climbing fail" />
             <div className="actions">
               <button onClick={like}>♥ {selected.likes}</button>

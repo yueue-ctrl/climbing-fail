@@ -150,6 +150,7 @@ nav button.active { border-bottom-color: var(--ink); }
   font: 1rem var(--hand);
   cursor: pointer;
   transform: rotate(4deg);
+  z-index: 2;
 }
 .actions { display: flex; border-block: 2px solid var(--ink); background: white; }
 .actions button, .actions a {

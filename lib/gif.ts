@@ -1,110 +1,19 @@
+import { GIFEncoder, applyPalette, quantize } from "gifenc";
+
 const MAX_EDGE = 240;
 const PIXEL_RATIO = 2;
 const FPS = 8;
 const MAX_SECONDS = 3;
 
-function word(bytes: number[], value: number) {
-  bytes.push(value & 255, (value >> 8) & 255);
-}
-
-function text(bytes: number[], value: string) {
-  for (const char of value) bytes.push(char.charCodeAt(0));
-}
-
-function palette() {
-  const bytes: number[] = [];
-  for (let index = 0; index < 256; index++) {
-    bytes.push(
-      Math.round(((index >> 5) & 7) * 255 / 7),
-      Math.round(((index >> 2) & 7) * 255 / 7),
-      Math.round((index & 3) * 255 / 3),
-    );
-  }
-  return bytes;
-}
-
-function quantize(data: Uint8ClampedArray) {
-  const output = new Uint8Array(data.length / 4);
-  for (let source = 0, target = 0; source < data.length; source += 4, target++) {
-    output[target] = ((data[source] >> 5) << 5) | ((data[source + 1] >> 5) << 2) | (data[source + 2] >> 6);
-  }
-  return output;
-}
-
-function lzw(indices: Uint8Array) {
-  const output: number[] = [];
-  let buffer = 0;
-  let bitCount = 0;
-  let codeSize = 9;
-  let nextCode = 258;
-  let dictionary = new Map<number, number>();
-
-  const writeCode = (code: number) => {
-    buffer |= code << bitCount;
-    bitCount += codeSize;
-    while (bitCount >= 8) {
-      output.push(buffer & 255);
-      buffer >>= 8;
-      bitCount -= 8;
-    }
-  };
-
-  writeCode(256);
-  let prefix = indices[0];
-  for (let index = 1; index < indices.length; index++) {
-    const suffix = indices[index];
-    const key = (prefix << 8) | suffix;
-    const found = dictionary.get(key);
-    if (found !== undefined) {
-      prefix = found;
-      continue;
-    }
-    writeCode(prefix);
-    if (nextCode < 4096) {
-      dictionary.set(key, nextCode++);
-      if (nextCode === (1 << codeSize) && codeSize < 12) codeSize++;
-    } else {
-      writeCode(256);
-      dictionary = new Map();
-      codeSize = 9;
-      nextCode = 258;
-    }
-    prefix = suffix;
-  }
-  writeCode(prefix);
-  writeCode(257);
-  if (bitCount) output.push(buffer & 255);
-  return output;
-}
-
-export function encodeGif(frames: Uint8ClampedArray[], width: number, height: number, delay = 13) {
-  const bytes: number[] = [];
-  text(bytes, "GIF89a");
-  word(bytes, width);
-  word(bytes, height);
-  bytes.push(0xf7, 0, 0, ...palette());
-  bytes.push(0x21, 0xff, 0x0b);
-  text(bytes, "NETSCAPE2.0");
-  bytes.push(3, 1, 0, 0, 0);
-
+export function encodeGif(frames: Uint8ClampedArray[], width: number, height: number, delay = 125) {
+  const gif = GIFEncoder();
   for (const frame of frames) {
-    bytes.push(0x21, 0xf9, 4, 0);
-    word(bytes, delay);
-    bytes.push(0, 0, 0x2c);
-    word(bytes, 0);
-    word(bytes, 0);
-    word(bytes, width);
-    word(bytes, height);
-    bytes.push(0, 8);
-    const compressed = lzw(quantize(frame));
-    for (let offset = 0; offset < compressed.length; offset += 255) {
-      const block = compressed.slice(offset, offset + 255);
-      bytes.push(block.length, ...block);
-    }
-    bytes.push(0);
+    const palette = quantize(frame, 128, { format: "rgb444" });
+    const indexed = applyPalette(frame, palette, "rgb444");
+    gif.writeFrame(indexed, width, height, { palette, delay, repeat: 0 });
   }
-  bytes.push(0x3b);
-  return new Blob([new Uint8Array(bytes).buffer], { type: "image/gif" });
+  gif.finish();
+  return new Blob([Uint8Array.from(gif.bytes()).buffer], { type: "image/gif" });
 }
 
 function sizeCanvases(width: number, height: number, low: HTMLCanvasElement, output: HTMLCanvasElement) {
@@ -189,7 +98,7 @@ export async function fileToPixelGif(file: File, onProgress: (value: number) => 
   }
 
   onProgress(96);
-  const gif = encodeGif(frames, output.width, output.height, Math.round(100 / FPS));
+  const gif = encodeGif(frames, output.width, output.height, Math.round(1000 / FPS));
   if (gif.size > 6 * 1024 * 1024) throw new Error("GIF IS TOO LARGE");
   onProgress(100);
   return gif;
