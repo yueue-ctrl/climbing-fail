@@ -19,6 +19,11 @@ type UploadRow = {
   created_at: number;
 };
 
+async function digest(buffer: ArrayBuffer) {
+  const hash = await crypto.subtle.digest("SHA-256", buffer);
+  return Array.from(new Uint8Array(hash), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
 export async function GET() {
   try {
     const result = await getDb().prepare(
@@ -58,14 +63,34 @@ export async function POST(request: Request) {
   const id = crypto.randomUUID();
   const key = `${id}.gif`;
   const createdAt = Date.now();
-  await getFiles().put(key, await file.arrayBuffer(), {
+  const filename = file.name.slice(0, 120);
+  const bytes = await file.arrayBuffer();
+  const incomingHash = await digest(bytes);
+  const existing = await getDb().prepare(
+    "SELECT id, category, filename, object_key, created_at FROM memes WHERE filename = ? ORDER BY created_at DESC LIMIT 10",
+  ).bind(filename).all<Omit<UploadRow, "likes">>();
+  for (const row of existing.results) {
+    const object = await getFiles().get(row.object_key);
+    if (object && await digest(await object.arrayBuffer()) === incomingHash) {
+      return Response.json({
+        id: row.id,
+        category: row.category,
+        filename: row.filename,
+        url: `/api/media/${encodeURIComponent(row.object_key)}`,
+        likes: 0,
+        createdAt: row.created_at,
+        uploaded: true,
+      });
+    }
+  }
+  await getFiles().put(key, bytes, {
     httpMetadata: { contentType: "image/gif", cacheControl: "public, max-age=31536000, immutable" },
-    customMetadata: { originalName: file.name.slice(0, 120) },
+    customMetadata: { originalName: filename },
   });
   try {
     await getDb().prepare(
       "INSERT INTO memes (id, category, filename, object_key, created_at) VALUES (?, ?, ?, ?, ?)",
-    ).bind(id, category, file.name.slice(0, 120), key, createdAt).run();
+    ).bind(id, category, filename, key, createdAt).run();
   } catch (error) {
     await getFiles().delete(key);
     throw error;
@@ -73,7 +98,7 @@ export async function POST(request: Request) {
   return Response.json({
     id,
     category,
-    filename: file.name.slice(0, 120),
+    filename,
     url: `/api/media/${encodeURIComponent(key)}`,
     likes: 0,
     createdAt,
