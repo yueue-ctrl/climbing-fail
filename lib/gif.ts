@@ -115,6 +115,17 @@ function drawSquare(source: CanvasImageSource, width: number, height: number, lo
   const outputContext = output.getContext("2d", { willReadFrequently: true })!;
   lowContext.clearRect(0, 0, PIXEL_SIZE, PIXEL_SIZE);
   lowContext.drawImage(source, sx, sy, side, side, 0, 0, PIXEL_SIZE, PIXEL_SIZE);
+  const pixels = lowContext.getImageData(0, 0, PIXEL_SIZE, PIXEL_SIZE);
+  for (let index = 0; index < pixels.data.length; index += 4) {
+    const red = pixels.data[index];
+    const green = pixels.data[index + 1];
+    const blue = pixels.data[index + 2];
+    const gray = red * 0.299 + green * 0.587 + blue * 0.114;
+    pixels.data[index] = Math.max(0, Math.min(255, (gray + (red - gray) * 1.28 - 128) * 1.16 + 128));
+    pixels.data[index + 1] = Math.max(0, Math.min(255, (gray + (green - gray) * 1.28 - 128) * 1.16 + 128));
+    pixels.data[index + 2] = Math.max(0, Math.min(255, (gray + (blue - gray) * 1.28 - 128) * 1.16 + 128));
+  }
+  lowContext.putImageData(pixels, 0, 0);
   outputContext.imageSmoothingEnabled = false;
   outputContext.clearRect(0, 0, SIZE, SIZE);
   outputContext.drawImage(low, 0, 0, SIZE, SIZE);

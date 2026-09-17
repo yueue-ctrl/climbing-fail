@@ -82,9 +82,12 @@ export default function Home() {
   return (
     <main>
       <header>
-        <h1>CLIMBING FAIL</h1>
+        <div className="brand">
+          <h1>CLIMBING FAIL</h1>
+          <p className="subtitle">YUE &amp; HER CLIMBING FRIENDS</p>
+        </div>
         <label className="upload">
-          {uploading ? progress : "+ UPLOAD"}
+          {uploading ? progress : "+ ADD"}
           <input ref={fileRef} type="file" accept="video/*,image/*" disabled={uploading}
             onChange={(event) => event.target.files?.[0] && upload(event.target.files[0])} />
         </label>

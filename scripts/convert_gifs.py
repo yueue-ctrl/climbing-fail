@@ -28,7 +28,11 @@ def convert(source: Path, destination: Path) -> tuple[int, int]:
             left = (width - side) // 2
             top = (height - side) // 2
             square = frame[top : top + side, left : left + side]
-            tiny = cv2.resize(square, (PIXEL_SIZE, PIXEL_SIZE), interpolation=cv2.INTER_AREA)
+            contrasted = cv2.convertScaleAbs(square, alpha=1.16, beta=-18)
+            hsv = cv2.cvtColor(contrasted, cv2.COLOR_BGR2HSV)
+            hsv[:, :, 1] = cv2.multiply(hsv[:, :, 1], 1.28)
+            graded = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+            tiny = cv2.resize(graded, (PIXEL_SIZE, PIXEL_SIZE), interpolation=cv2.INTER_AREA)
             frames.append(cv2.resize(tiny, (TARGET_SIZE, TARGET_SIZE), interpolation=cv2.INTER_NEAREST))
             next_sample += step
         frame_index += 1
