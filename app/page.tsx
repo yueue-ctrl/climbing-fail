@@ -3,7 +3,15 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { fileToPixelGif } from "@/lib/gif";
 
-type Meme = { id: string; category: string; url: string; filename: string; likes: number };
+type Meme = {
+  id: string;
+  category: string;
+  url: string;
+  filename: string;
+  likes: number;
+  createdAt?: number;
+  uploaded?: boolean;
+};
 type Comment = { id: number; author: string; body: string; createdAt: number };
 const categories = ["ALL", "SLIP", "SWING", "GRAVITY", "OTHER"];
 
@@ -14,6 +22,14 @@ function shuffle<T>(items: T[]) {
     [shuffled[index], shuffled[swapWith]] = [shuffled[swapWith], shuffled[index]];
   }
   return shuffled;
+}
+
+function arrangeMemes(items: Meme[]) {
+  const latest = items
+    .filter((item) => item.uploaded)
+    .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0))[0];
+  if (!latest) return shuffle(items);
+  return [latest, ...shuffle(items.filter((item) => item.id !== latest.id))];
 }
 
 export default function Home() {
@@ -27,7 +43,7 @@ export default function Home() {
 
   async function loadMemes() {
     const response = await fetch("/api/memes");
-    if (response.ok) setMemes(shuffle(await response.json()));
+    if (response.ok) setMemes(arrangeMemes(await response.json()));
   }
 
   useEffect(() => { loadMemes().catch(() => undefined); }, []);
@@ -47,15 +63,16 @@ export default function Home() {
   async function upload(file: File) {
     setUploading(true);
     try {
-      setProgress("LOADING");
-      const gif = await fileToPixelGif(file, (value) => setProgress(`PROCESSING ${value}%`));
-      setProgress("UPLOADING");
+      setProgress("PROCESSING... 0%");
+      const gif = await fileToPixelGif(file, (value) => setProgress(`PROCESSING... ${value}%`));
+      setProgress("UPLOADING...");
       const form = new FormData();
       form.set("file", gif, file.name.replace(/\.[^.]+$/, "") + ".gif");
       form.set("category", filter === "ALL" ? "OTHER" : filter);
       const response = await fetch("/api/memes", { method: "POST", body: form });
       if (!response.ok) throw new Error(await response.text());
-      await loadMemes();
+      const saved = (await response.json()) as Meme;
+      setMemes((items) => [saved, ...items.filter((item) => item.id !== saved.id)]);
       setProgress("DONE");
     } catch (error) {
       setProgress(error instanceof Error ? error.message.toUpperCase() : "UPLOAD FAILED");

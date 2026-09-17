@@ -10,12 +10,19 @@ const seed = [
   { id: "seed-5", category: "SLIP", url: "/gifs/climbing-fail-05.gif", filename: "climbing-fail-05.gif" },
 ];
 
-type UploadRow = { id: string; category: string; filename: string; object_key: string; likes: number | null };
+type UploadRow = {
+  id: string;
+  category: string;
+  filename: string;
+  object_key: string;
+  likes: number | null;
+  created_at: number;
+};
 
 export async function GET() {
   try {
     const result = await getDb().prepare(
-      `SELECT m.id, m.category, m.filename, m.object_key, COALESCE(e.likes, 0) AS likes
+      `SELECT m.id, m.category, m.filename, m.object_key, m.created_at, COALESCE(e.likes, 0) AS likes
        FROM memes m LEFT JOIN engagement e ON e.meme_id = m.id
        ORDER BY m.created_at DESC`,
     ).all<UploadRow>();
@@ -30,11 +37,13 @@ export async function GET() {
         filename: row.filename,
         url: `/api/media/${encodeURIComponent(row.object_key)}`,
         likes: row.likes ?? 0,
+        createdAt: row.created_at,
+        uploaded: true,
       })),
-      ...seed.map((item) => ({ ...item, likes: likes.get(item.id) ?? 0 })),
+      ...seed.map((item) => ({ ...item, likes: likes.get(item.id) ?? 0, uploaded: false })),
     ]);
   } catch {
-    return Response.json(seed.map((item) => ({ ...item, likes: 0 })));
+    return Response.json(seed.map((item) => ({ ...item, likes: 0, uploaded: false })));
   }
 }
 
@@ -48,6 +57,7 @@ export async function POST(request: Request) {
 
   const id = crypto.randomUUID();
   const key = `${id}.gif`;
+  const createdAt = Date.now();
   await getFiles().put(key, await file.arrayBuffer(), {
     httpMetadata: { contentType: "image/gif", cacheControl: "public, max-age=31536000, immutable" },
     customMetadata: { originalName: file.name.slice(0, 120) },
@@ -55,10 +65,18 @@ export async function POST(request: Request) {
   try {
     await getDb().prepare(
       "INSERT INTO memes (id, category, filename, object_key, created_at) VALUES (?, ?, ?, ?, ?)",
-    ).bind(id, category, file.name.slice(0, 120), key, Date.now()).run();
+    ).bind(id, category, file.name.slice(0, 120), key, createdAt).run();
   } catch (error) {
     await getFiles().delete(key);
     throw error;
   }
-  return Response.json({ id }, { status: 201 });
+  return Response.json({
+    id,
+    category,
+    filename: file.name.slice(0, 120),
+    url: `/api/media/${encodeURIComponent(key)}`,
+    likes: 0,
+    createdAt,
+    uploaded: true,
+  }, { status: 201 });
 }
