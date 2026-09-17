@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Climbing Fail — 把掉落瞬间做成朋友间最值得收藏的攀岩表情包。" />
+    <meta name="theme-color" content="#11110f" />
+    <title>CLIMBING FAIL — 坠落名场面收藏夹</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='13' fill='%23ff5c35'/%3E%3Cpath d='M17 14h30L34 29l12 21H18l12-21z' fill='%2311110f'/%3E%3Ccircle cx='31' cy='26' r='5' fill='%23d9ff43'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Noto+Sans+SC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Climbing Fail 首页">
+        <span class="brand-mark">CF!</span>
+        <span>CLIMBING<br />FAIL</span>
+      </a>
+      <div class="header-note">朋友摔得好看，<br />就该被好好收藏。</div>
+      <button class="btn btn-primary" data-open-upload>
+        <span>＋</span> 新增事故
+      </button>
+    </header>
+
+    <main id="top">
+      <section class="intro" aria-labelledby="page-title">
+        <div class="issue">ISSUE 001 / THE GRAVITY ARCHIVE</div>
+        <h1 id="page-title">今日份<br /><span>优雅坠落</span></h1>
+        <p class="intro-copy">不是失败，是地心引力的精彩回放。收集那些动作没成、表情先成了的瞬间。</p>
+        <div class="ticker" aria-hidden="true">
+          <div>脚滑了 · 核心下班 · 手点打烊 · beta 诈骗 · 重力胜利 · 脚滑了 · 核心下班 · 手点打烊 ·</div>
+        </div>
+      </section>
+
+      <section class="collection" aria-labelledby="collection-title">
+        <div class="collection-head">
+          <div>
+            <p class="eyebrow">THE HALL OF FALL</p>
+            <h2 id="collection-title">掉落名场面</h2>
+          </div>
+          <button class="random-btn" id="randomBtn" aria-label="随机抽取一个掉落名场面">↝ 随机处刑</button>
+        </div>
+
+        <div class="filters" role="group" aria-label="筛选掉落类型">
+          <button class="filter active" data-filter="all">全部 <sup id="allCount">05</sup></button>
+          <button class="filter" data-filter="脚滑">脚滑</button>
+          <button class="filter" data-filter="核心下班">核心下班</button>
+          <button class="filter" data-filter="重力胜利">重力胜利</button>
+        </div>
+
+        <div class="meme-grid" id="memeGrid"></div>
+        <div class="empty-state" id="emptyState" hidden>
+          <strong>这里还没摔过。</strong>
+          <span>换个分类，或者贡献一次精彩掉落。</span>
+        </div>
+      </section>
+
+      <section class="manifesto" aria-label="Climbing Fail 宣言">
+        <div class="manifesto-kicker">OUR VERY SERIOUS MISSION</div>
+        <p>我们不记录<span>谁没爬上去</span>，<br />我们只记录<span>谁掉得最有戏</span>。</p>
+        <div class="stamp">SAFE FALLS<br />ONLY</div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="brand footer-brand"><span class="brand-mark">CF!</span><span>CLIMBING<br />FAIL</span></div>
+      <p>摔可以，受伤不行。只上传安全、本人同意公开的瞬间。</p>
+      <span>EST. WHEN WE FELL</span>
+    </footer>
+
+    <dialog id="uploadDialog" class="upload-dialog">
+      <form id="uploadForm" method="dialog">
+        <div class="dialog-head">
+          <div>
+            <p class="eyebrow">FILE A NEW INCIDENT</p>
+            <h2>登记掉落事故</h2>
+          </div>
+          <button type="button" class="close-btn" data-close-upload aria-label="关闭">×</button>
+        </div>
+
+        <label class="drop-zone" id="dropZone">
+          <input id="imageInput" name="image" type="file" accept="image/*" required />
+          <img id="imagePreview" alt="待上传图片预览" hidden />
+          <span class="drop-copy"><b>丢一张名场面进来</b><small>点击选择图片 · 建议竖图</small></span>
+        </label>
+
+        <div class="form-row">
+          <label>主角<input name="climber" maxlength="18" placeholder="比如：Alex" required /></label>
+          <label>掉落类型<select name="type"><option>脚滑</option><option>核心下班</option><option>重力胜利</option><option>手点打烊</option><option>beta 诈骗</option></select></label>
+        </div>
+        <label>一句话吐槽<input name="caption" maxlength="44" placeholder="例如：我以为那个脚点是真心的" required /></label>
+        <label>事故地点<input name="location" maxlength="28" placeholder="例如：The Cliffs · LIC" /></label>
+
+        <div class="safety-check">
+          <input id="consent" type="checkbox" required />
+          <label for="consent">这是一次安全掉落，而且当事人同意加入合集。</label>
+        </div>
+        <div class="dialog-actions">
+          <button type="button" class="btn btn-ghost" data-close-upload>取消</button>
+          <button type="submit" class="btn btn-primary">收录这次掉落 ↗</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">已加入重力档案 ✓</div>
+    <script src="app.js"></script>
+  </body>
+</html>
