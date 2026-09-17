@@ -19,6 +19,11 @@ type UploadRow = {
   created_at: number;
 };
 
+const hiddenBrokenUploads = new Set([
+  "0b255061-6cc8-432a-b0b9-89ea9545d9b8",
+  "baed6e8c-1c80-402a-8c23-59907d8f0603",
+]);
+
 async function digest(buffer: ArrayBuffer) {
   const hash = await crypto.subtle.digest("SHA-256", buffer);
   return Array.from(new Uint8Array(hash), (byte) => byte.toString(16).padStart(2, "0")).join("");
@@ -36,7 +41,7 @@ export async function GET() {
     ).all<{ meme_id: string; likes: number }>();
     const likes = new Map(seedLikes.results.map((row) => [row.meme_id, row.likes]));
     return Response.json([
-      ...result.results.map((row) => ({
+      ...result.results.filter((row) => !hiddenBrokenUploads.has(row.id)).map((row) => ({
         id: row.id,
         category: row.category,
         filename: row.filename,
