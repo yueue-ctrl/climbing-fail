@@ -6,7 +6,7 @@ import cv2
 SOURCE_DIR = Path("gif")
 OUTPUT_DIR = Path("public/gifs")
 TARGET_SIZE = 240
-PIXEL_SIZE = 120
+PIXEL_SIZE = 160
 TARGET_FPS = 8
 
 

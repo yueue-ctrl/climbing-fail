@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { fileToPixelGif } from "@/lib/gif";
 
 type Meme = {
@@ -13,7 +13,6 @@ type Meme = {
   uploaded?: boolean;
 };
 type Comment = { id: number; author: string; body: string; createdAt: number };
-const categories = ["ALL", "SLIP", "SWING", "GRAVITY", "OTHER"];
 
 function shuffle<T>(items: T[]) {
   const shuffled = [...items];
@@ -34,7 +33,6 @@ function arrangeMemes(items: Meme[]) {
 
 export default function Home() {
   const [memes, setMemes] = useState<Meme[]>([]);
-  const [filter, setFilter] = useState("ALL");
   const [selected, setSelected] = useState<Meme | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -55,11 +53,6 @@ export default function Home() {
       .catch(() => setComments([]));
   }, [selected]);
 
-  const visible = useMemo(
-    () => (filter === "ALL" ? memes : memes.filter((meme) => meme.category === filter)),
-    [filter, memes],
-  );
-
   async function upload(file: File) {
     setUploading(true);
     try {
@@ -68,7 +61,7 @@ export default function Home() {
       setProgress("UPLOADING...");
       const form = new FormData();
       form.set("file", gif, file.name.replace(/\.[^.]+$/, "") + ".gif");
-      form.set("category", filter === "ALL" ? "OTHER" : filter);
+      form.set("category", "OTHER");
       const response = await fetch("/api/memes", { method: "POST", body: form });
       if (!response.ok) throw new Error(await response.text());
       const saved = (await response.json()) as Meme;
@@ -119,17 +112,9 @@ export default function Home() {
         </label>
       </header>
 
-      <nav aria-label="Categories">
-        {categories.map((category) => (
-          <button key={category} className={filter === category ? "active" : ""} onClick={() => setFilter(category)}>
-            {category}
-          </button>
-        ))}
-      </nav>
-
       {progress && <div className="status">{progress}</div>}
       <section className="grid" aria-label="Climbing fail GIFs">
-        {visible.map((meme) => (
+        {memes.map((meme) => (
           <button className="tile" key={meme.id} onClick={() => setSelected(meme)} aria-label="Open GIF">
             <img src={meme.url} alt="Looping climbing fail" />
           </button>
