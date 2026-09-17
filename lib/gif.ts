@@ -1,5 +1,5 @@
-const SIZE = 240;
-const PIXEL_SIZE = 80;
+const MAX_EDGE = 240;
+const PIXEL_RATIO = 3;
 const FPS = 8;
 const MAX_SECONDS = 3;
 
@@ -107,15 +107,20 @@ export function encodeGif(frames: Uint8ClampedArray[], width: number, height: nu
   return new Blob([new Uint8Array(bytes).buffer], { type: "image/gif" });
 }
 
-function drawSquare(source: CanvasImageSource, width: number, height: number, low: HTMLCanvasElement, output: HTMLCanvasElement) {
-  const side = Math.min(width, height);
-  const sx = (width - side) / 2;
-  const sy = (height - side) / 2;
+function sizeCanvases(width: number, height: number, low: HTMLCanvasElement, output: HTMLCanvasElement) {
+  const scale = MAX_EDGE / Math.max(width, height);
+  output.width = Math.max(1, Math.round(width * scale));
+  output.height = Math.max(1, Math.round(height * scale));
+  low.width = Math.max(1, Math.round(output.width / PIXEL_RATIO));
+  low.height = Math.max(1, Math.round(output.height / PIXEL_RATIO));
+}
+
+function drawFrame(source: CanvasImageSource, low: HTMLCanvasElement, output: HTMLCanvasElement) {
   const lowContext = low.getContext("2d", { willReadFrequently: true })!;
   const outputContext = output.getContext("2d", { willReadFrequently: true })!;
-  lowContext.clearRect(0, 0, PIXEL_SIZE, PIXEL_SIZE);
-  lowContext.drawImage(source, sx, sy, side, side, 0, 0, PIXEL_SIZE, PIXEL_SIZE);
-  const pixels = lowContext.getImageData(0, 0, PIXEL_SIZE, PIXEL_SIZE);
+  lowContext.clearRect(0, 0, low.width, low.height);
+  lowContext.drawImage(source, 0, 0, low.width, low.height);
+  const pixels = lowContext.getImageData(0, 0, low.width, low.height);
   for (let index = 0; index < pixels.data.length; index += 4) {
     const red = pixels.data[index];
     const green = pixels.data[index + 1];
@@ -127,12 +132,13 @@ function drawSquare(source: CanvasImageSource, width: number, height: number, lo
   }
   lowContext.putImageData(pixels, 0, 0);
   outputContext.imageSmoothingEnabled = false;
-  outputContext.clearRect(0, 0, SIZE, SIZE);
-  outputContext.drawImage(low, 0, 0, SIZE, SIZE);
-  return outputContext.getImageData(0, 0, SIZE, SIZE).data;
+  outputContext.clearRect(0, 0, output.width, output.height);
+  outputContext.drawImage(low, 0, 0, output.width, output.height);
+  return outputContext.getImageData(0, 0, output.width, output.height).data;
 }
 
 function seek(video: HTMLVideoElement, time: number) {
+  if (Math.abs(video.currentTime - time) < 0.001 && video.readyState >= 2) return Promise.resolve();
   return new Promise<void>((resolve, reject) => {
     const done = () => { cleanup(); resolve(); };
     const fail = () => { cleanup(); reject(new Error("VIDEO COULD NOT BE READ")); };
@@ -150,11 +156,9 @@ export async function fileToPixelGif(file: File, onProgress: (value: number) => 
   if (file.size > 80 * 1024 * 1024) throw new Error("FILE IS TOO LARGE");
   const low = document.createElement("canvas");
   const output = document.createElement("canvas");
-  low.width = low.height = PIXEL_SIZE;
-  output.width = output.height = SIZE;
   const frames: Uint8ClampedArray[] = [];
 
-  if (file.type.startsWith("video/")) {
+  if (file.type.startsWith("video/") || /\.mov$/i.test(file.name)) {
     const url = URL.createObjectURL(file);
     const video = document.createElement("video");
     video.muted = true;
@@ -162,20 +166,22 @@ export async function fileToPixelGif(file: File, onProgress: (value: number) => 
     video.preload = "auto";
     video.src = url;
     await new Promise<void>((resolve, reject) => {
-      video.addEventListener("loadedmetadata", () => resolve(), { once: true });
+      video.addEventListener("loadeddata", () => resolve(), { once: true });
       video.addEventListener("error", () => reject(new Error("VIDEO FORMAT NOT SUPPORTED")), { once: true });
     });
+    sizeCanvases(video.videoWidth, video.videoHeight, low, output);
     const duration = Math.min(video.duration || 1, MAX_SECONDS);
     const count = Math.max(1, Math.ceil(duration * FPS));
     for (let index = 0; index < count; index++) {
       await seek(video, Math.min(index / FPS, Math.max(0, duration - 0.02)));
-      frames.push(drawSquare(video, video.videoWidth, video.videoHeight, low, output));
+      frames.push(drawFrame(video, low, output));
       onProgress(Math.round(((index + 1) / count) * 90));
     }
     URL.revokeObjectURL(url);
   } else if (file.type.startsWith("image/")) {
     const bitmap = await createImageBitmap(file);
-    frames.push(drawSquare(bitmap, bitmap.width, bitmap.height, low, output));
+    sizeCanvases(bitmap.width, bitmap.height, low, output);
+    frames.push(drawFrame(bitmap, low, output));
     bitmap.close();
     onProgress(90);
   } else {
@@ -183,7 +189,7 @@ export async function fileToPixelGif(file: File, onProgress: (value: number) => 
   }
 
   onProgress(96);
-  const gif = encodeGif(frames, SIZE, SIZE, Math.round(100 / FPS));
+  const gif = encodeGif(frames, output.width, output.height, Math.round(100 / FPS));
   if (gif.size > 6 * 1024 * 1024) throw new Error("GIF IS TOO LARGE");
   onProgress(100);
   return gif;

@@ -38,7 +38,7 @@ export default function Home() {
   async function upload(file: File) {
     setUploading(true);
     try {
-      setProgress("CROPPING");
+      setProgress("LOADING");
       const gif = await fileToPixelGif(file, (value) => setProgress(`PROCESSING ${value}%`));
       setProgress("UPLOADING");
       const form = new FormData();
@@ -88,7 +88,7 @@ export default function Home() {
         </div>
         <label className="upload">
           {uploading ? progress : "+ ADD"}
-          <input ref={fileRef} type="file" accept="video/*,image/*" disabled={uploading}
+          <input ref={fileRef} type="file" accept=".mov,video/quicktime,video/mp4,video/webm,image/*" disabled={uploading}
             onChange={(event) => event.target.files?.[0] && upload(event.target.files[0])} />
         </label>
       </header>
