@@ -1,5 +1,5 @@
 const MAX_EDGE = 240;
-const PIXEL_RATIO = 3;
+const PIXEL_RATIO = 2;
 const FPS = 8;
 const MAX_SECONDS = 3;
 

@@ -7,6 +7,15 @@ type Meme = { id: string; category: string; url: string; filename: string; likes
 type Comment = { id: number; author: string; body: string; createdAt: number };
 const categories = ["ALL", "SLIP", "SWING", "GRAVITY", "OTHER"];
 
+function shuffle<T>(items: T[]) {
+  const shuffled = [...items];
+  for (let index = shuffled.length - 1; index > 0; index--) {
+    const swapWith = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[swapWith]] = [shuffled[swapWith], shuffled[index]];
+  }
+  return shuffled;
+}
+
 export default function Home() {
   const [memes, setMemes] = useState<Meme[]>([]);
   const [filter, setFilter] = useState("ALL");
@@ -18,7 +27,7 @@ export default function Home() {
 
   async function loadMemes() {
     const response = await fetch("/api/memes");
-    if (response.ok) setMemes(await response.json());
+    if (response.ok) setMemes(shuffle(await response.json()));
   }
 
   useEffect(() => { loadMemes().catch(() => undefined); }, []);
