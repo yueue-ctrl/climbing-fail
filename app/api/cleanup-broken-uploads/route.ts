@@ -17,5 +17,5 @@ export async function GET() {
     ]);
     await getFiles().delete(key);
   }
-  return Response.json({ removed: brokenUploads.map(([id]) => id) });
+  return Response.json({ removed: brokenUploads.length });
 }
