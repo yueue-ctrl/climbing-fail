@@ -4,9 +4,10 @@ import cv2
 
 
 SOURCE_DIR = Path("gif")
-OUTPUT_DIR = Path("dist/assets/gifs")
-TARGET_SIZE = 480
-TARGET_FPS = 12
+OUTPUT_DIR = Path("public/gifs")
+TARGET_SIZE = 240
+PIXEL_SIZE = 80
+TARGET_FPS = 8
 
 
 def convert(source: Path, destination: Path) -> tuple[int, int]:
@@ -23,13 +24,12 @@ def convert(source: Path, destination: Path) -> tuple[int, int]:
             break
         if frame_index + 0.001 >= next_sample:
             height, width = frame.shape[:2]
-            scale = TARGET_SIZE / max(width, height)
-            resized = cv2.resize(
-                frame,
-                (round(width * scale), round(height * scale)),
-                interpolation=cv2.INTER_AREA,
-            )
-            frames.append(resized)
+            side = min(width, height)
+            left = (width - side) // 2
+            top = (height - side) // 2
+            square = frame[top : top + side, left : left + side]
+            tiny = cv2.resize(square, (PIXEL_SIZE, PIXEL_SIZE), interpolation=cv2.INTER_AREA)
+            frames.append(cv2.resize(tiny, (TARGET_SIZE, TARGET_SIZE), interpolation=cv2.INTER_NEAREST))
             next_sample += step
         frame_index += 1
 

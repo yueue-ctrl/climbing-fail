@@ -1,0 +1,17 @@
+# dependencies and generated output
+/node_modules/
+/.vinext/
+/.next/
+/dist/
+/.wrangler/
+/out/
+next-env.d.ts
+*.tsbuildinfo
+
+# local source videos stay on this machine
+/gif/
+
+# local environment and OS files
+.env*
+.DS_Store
+npm-debug.log*
