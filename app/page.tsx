@@ -113,7 +113,7 @@ export default function Home() {
       </header>
 
       {progress && <div className="status">{progress}</div>}
-      <section className="grid" aria-label="Climbing fail GIFs">
+      <section className="gallery" aria-label="Climbing fail GIFs">
         {memes.map((meme) => (
           <button className="tile" key={meme.id} onClick={() => setSelected(meme)} aria-label="Open GIF">
             <img src={meme.url} alt="Looping climbing fail" />

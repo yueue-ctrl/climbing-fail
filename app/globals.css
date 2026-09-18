@@ -61,8 +61,9 @@ h1 {
   font: .62rem/1.5 var(--hand);
 }
 
-.grid {
+.gallery {
   padding: 28px;
+  display: block;
   columns: 5;
   column-gap: 24px;
 }
@@ -152,11 +153,11 @@ h1 {
 .comments form button { font-family: var(--hand); font-size: .6rem; cursor: pointer; }
 
 @media (max-width: 1100px) {
-  .grid { columns: 4; }
+  .gallery { columns: 4; }
 }
 
 @media (max-width: 800px) {
-  .grid { columns: 3; }
+  .gallery { columns: 3; }
 }
 
 @media (max-width: 600px) {
@@ -165,7 +166,7 @@ h1 {
   h1 { font-size: clamp(1.35rem, 7vw, 2rem); }
   .subtitle { margin-left: 2px; font-size: .52rem; }
   .upload { padding: 10px 12px 8px; font-size: .56rem; }
-  .grid { columns: 2; column-gap: 15px; padding: 14px; }
+  .gallery { columns: 2; column-gap: 15px; padding: 14px; }
   .tile { margin-bottom: 15px; }
   .comments form { grid-template-columns: 72px 1fr; }
   .comments form button { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--ink); }
