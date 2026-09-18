@@ -54,7 +54,7 @@ header::after {
   background: linear-gradient(to bottom, transparent, rgba(255,255,255,.72) 48%, white 88%);
   pointer-events: none;
 }
-.brand, .upload { position: relative; z-index: 2; }
+.brand, .header-actions { position: relative; z-index: 2; }
 .brand { text-align: center; transform: rotate(-.7deg); }
 h1 {
   margin: 0;
@@ -75,7 +75,8 @@ h1 span + span { margin-top: .06em; }
   transform: rotate(.8deg);
   text-shadow: 0 0 12px white, 0 0 12px white;
 }
-.upload {
+.header-actions { display: flex; align-items: center; gap: 26px; }
+.upload, .reverse-all {
   flex: 0 0 auto;
   padding: 3px 2px 5px;
   border: 0;
@@ -87,7 +88,8 @@ h1 span + span { margin-top: .06em; }
   cursor: pointer;
   transform: rotate(-1.5deg);
 }
-.upload:hover { transform: rotate(1deg) scale(1.05); }
+.reverse-all { transform: rotate(1deg); }
+.upload:hover, .reverse-all:hover { transform: rotate(0deg) scale(1.05); }
 .upload input { display: none; }
 
 .status {
@@ -382,7 +384,8 @@ h1 span + span { margin-top: .06em; }
   header::before { background-position: center calc(100% - 24px); background-size: auto 78%; opacity: .28; }
   h1 { font-size: clamp(3.2rem, 18vw, 5.3rem); }
   .subtitle { margin-top: 20px; font-size: .95rem; }
-  .upload { padding: 3px 1px 4px; font-size: .72rem; }
+  .header-actions { gap: 20px; }
+  .upload, .reverse-all { padding: 3px 1px 4px; font-size: .72rem; }
   .gallery { margin-top: -64px; gap: 22px; padding: 0 18px 38px; }
   .gallery-column { gap: 22px; }
   .site-footer { padding: 13px 14px 15px; }

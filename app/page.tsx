@@ -54,6 +54,7 @@ export default function Home() {
   const [caption, setCaption] = useState("");
   const [captionPosition, setCaptionPosition] = useState<CaptionPosition>("middle");
   const [captionScale, setCaptionScale] = useState(1);
+  const [gravityUndone, setGravityUndone] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState("");
   const columnCount = useSyncExternalStore(subscribeToResize, getColumnCount, () => 5);
@@ -205,19 +206,28 @@ export default function Home() {
   const adminPageCount = Math.max(1, Math.ceil(memes.length / ADMIN_PAGE_SIZE));
   const safeAdminPage = Math.min(adminPage, adminPageCount);
   const adminMemes = memes.slice((safeAdminPage - 1) * ADMIN_PAGE_SIZE, safeAdminPage * ADMIN_PAGE_SIZE);
+  const memeSource = (meme: Meme) => gravityUndone
+    ? `/api/media/${encodeURIComponent(meme.id)}?reverse=1`
+    : meme.url;
 
   return (
     <main>
       <header>
         <div className="brand">
-          <h1><span>GRAVITY: 1,</span><span>US: 0</span></h1>
+          <h1><span>{gravityUndone ? "GRAVITY: 0," : "GRAVITY: 1,"}</span><span>{gravityUndone ? "US: 1" : "US: 0"}</span></h1>
           <p className="subtitle">A CLIMBING FAIL MEME COLLECTION BY YUE &amp; FRIENDS</p>
         </div>
-        <label className="upload">
-          {uploading ? progress : "UPLOAD"}
-          <input ref={fileRef} type="file" accept=".mov,video/quicktime,video/mp4,video/webm,image/*" disabled={uploading}
-            onChange={(event) => event.target.files?.[0] && chooseFile(event.target.files[0])} />
-        </label>
+        <div className="header-actions">
+          <label className="upload">
+            {uploading ? progress : "UPLOAD"}
+            <input ref={fileRef} type="file" accept=".mov,video/quicktime,video/mp4,video/webm,image/*" disabled={uploading}
+              onChange={(event) => event.target.files?.[0] && chooseFile(event.target.files[0])} />
+          </label>
+          <button className="reverse-all" type="button" aria-pressed={gravityUndone}
+            onClick={() => setGravityUndone((value) => !value)}>
+            {gravityUndone ? "RESTORE GRAVITY" : "UNDO GRAVITY"}
+          </button>
+        </div>
       </header>
 
       {progress && <div className="status">{progress}</div>}
@@ -267,7 +277,7 @@ export default function Home() {
             {memes.filter((_, index) => index % columnCount === column).map((meme) => (
               <button className="tile" key={meme.id} onClick={() => setSelected(meme)} aria-label="Open GIF">
                 {/* oxlint-disable-next-line next/no-img-element */}
-                <img src={meme.url} alt="Looping climbing fail" />
+                <img src={memeSource(meme)} alt="Looping climbing fail" />
               </button>
             ))}
           </div>
@@ -282,10 +292,10 @@ export default function Home() {
               setSelected(null);
             }} aria-label="Close">×</button>
             {/* oxlint-disable-next-line next/no-img-element */}
-            <img src={selected.url} alt="Looping climbing fail" />
+            <img src={memeSource(selected)} alt="Looping climbing fail" />
             <div className="actions">
               <button onClick={like}>♥ {selected.likes}</button>
-              <a href={`/api/media/${encodeURIComponent(selected.id)}?download=1`}>DOWNLOAD</a>
+              <a href={`/api/media/${encodeURIComponent(selected.id)}?download=1${gravityUndone ? "&reverse=1" : ""}`}>DOWNLOAD</a>
             </div>
             <div className="comments">
               {comments.map((item) => <p key={item.id}><b>{item.author}</b> {item.body}</p>)}
