@@ -45,10 +45,13 @@ export default function Home() {
   const [memes, setMemes] = useState<Meme[]>([]);
   const [selected, setSelected] = useState<Meme | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [adminOpen, setAdminOpen] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState("");
   const columnCount = useSyncExternalStore(subscribeToResize, getColumnCount, () => 5);
   const fileRef = useRef<HTMLInputElement>(null);
+  const pressedKeys = useRef(new Set<string>());
 
   useEffect(() => {
     let active = true;
@@ -65,6 +68,29 @@ export default function Home() {
       .then(setComments)
       .catch(() => setComments([]));
   }, [selected]);
+  useEffect(() => {
+    function keyDown(event: KeyboardEvent) {
+      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
+      pressedKeys.current.add(event.key.toLowerCase());
+      if (pressedKeys.current.has("z") && pressedKeys.current.has("y")) {
+        event.preventDefault();
+        setAdminOpen(true);
+      }
+      if (event.key === "Escape") setAdminOpen(false);
+    }
+    function keyUp(event: KeyboardEvent) {
+      pressedKeys.current.delete(event.key.toLowerCase());
+    }
+    function clearKeys() { pressedKeys.current.clear(); }
+    window.addEventListener("keydown", keyDown);
+    window.addEventListener("keyup", keyUp);
+    window.addEventListener("blur", clearKeys);
+    return () => {
+      window.removeEventListener("keydown", keyDown);
+      window.removeEventListener("keyup", keyUp);
+      window.removeEventListener("blur", clearKeys);
+    };
+  }, []);
 
   async function upload(file: File) {
     setUploading(true);
@@ -119,6 +145,24 @@ export default function Home() {
     event.currentTarget.reset();
   }
 
+  async function removeMeme(meme: Meme) {
+    if (!window.confirm(`DELETE ${meme.filename}?`)) return;
+    setDeletingId(meme.id);
+    try {
+      const response = await fetch(`/api/memes/${meme.id}`, {
+        method: "DELETE",
+        headers: { "x-admin-trigger": "zy" },
+      });
+      if (!response.ok) throw new Error(await response.text());
+      setMemes((items) => items.filter((item) => item.id !== meme.id));
+      setSelected((item) => item?.id === meme.id ? null : item);
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : "DELETE FAILED");
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
   return (
     <main>
       <header>
@@ -169,6 +213,32 @@ export default function Home() {
               </form>
             </div>
           </article>
+        </dialog>
+      )}
+      {adminOpen && (
+        <dialog open className="admin-console" aria-label="Backstage controls">
+          <section className="admin-panel">
+            <header className="admin-header">
+              <h2>BACKSTAGE / Z+Y</h2>
+              <button type="button" onClick={() => setAdminOpen(false)} aria-label="Close backstage">×</button>
+            </header>
+            <div className="admin-list">
+              {memes.length === 0 && <p>NO UPLOADS</p>}
+              {memes.map((meme) => (
+                <article className="admin-item" key={meme.id}>
+                  {/* oxlint-disable-next-line next/no-img-element */}
+                  <img src={meme.url} alt="" />
+                  <div>
+                    <p>{meme.filename}</p>
+                    <small>♥ {meme.likes}</small>
+                  </div>
+                  <button type="button" disabled={deletingId === meme.id} onClick={() => removeMeme(meme)}>
+                    {deletingId === meme.id ? "DELETING..." : "DELETE"}
+                  </button>
+                </article>
+              ))}
+            </div>
+          </section>
         </dialog>
       )}
       <footer className="site-footer">
