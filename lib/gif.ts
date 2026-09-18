@@ -1,4 +1,4 @@
-const MAX_EDGE = 480;
+const MAX_EDGE = 400;
 const FPS = 8;
 const MAX_SECONDS = 3;
 
@@ -175,7 +175,9 @@ function drawFrame(
   outputContext.imageSmoothingEnabled = true;
   outputContext.imageSmoothingQuality = "high";
   outputContext.clearRect(0, 0, output.width, output.height);
+  outputContext.filter = "blur(0.35px)";
   outputContext.drawImage(source, 0, 0, output.width, output.height);
+  outputContext.filter = "none";
   drawCaption(outputContext, caption, position, captionScale);
   return outputContext.getImageData(0, 0, output.width, output.height).data;
 }
