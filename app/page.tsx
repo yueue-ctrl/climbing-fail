@@ -37,6 +37,7 @@ export default function Home() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState("");
+  const [columnCount, setColumnCount] = useState(5);
   const fileRef = useRef<HTMLInputElement>(null);
 
   async function loadMemes() {
@@ -45,6 +46,14 @@ export default function Home() {
   }
 
   useEffect(() => { loadMemes().catch(() => undefined); }, []);
+  useEffect(() => {
+    const updateColumns = () => setColumnCount(
+      window.innerWidth <= 600 ? 2 : window.innerWidth <= 800 ? 3 : window.innerWidth <= 1100 ? 4 : 5,
+    );
+    updateColumns();
+    window.addEventListener("resize", updateColumns);
+    return () => window.removeEventListener("resize", updateColumns);
+  }, []);
   useEffect(() => {
     if (!selected) return;
     fetch(`/api/memes/${selected.id}/comments`)
@@ -113,11 +122,15 @@ export default function Home() {
       </header>
 
       {progress && <div className="status">{progress}</div>}
-      <section className="gallery" aria-label="Climbing fail GIFs">
-        {memes.map((meme) => (
-          <button className="tile" key={meme.id} onClick={() => setSelected(meme)} aria-label="Open GIF">
-            <img src={meme.url} alt="Looping climbing fail" />
-          </button>
+      <section className="gallery" style={{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }} aria-label="Climbing fail GIFs">
+        {Array.from({ length: columnCount }, (_, column) => (
+          <div className="gallery-column" key={column}>
+            {memes.filter((_, index) => index % columnCount === column).map((meme) => (
+              <button className="tile" key={meme.id} onClick={() => setSelected(meme)} aria-label="Open GIF">
+                <img src={meme.url} alt="Looping climbing fail" />
+              </button>
+            ))}
+          </div>
         ))}
       </section>
 

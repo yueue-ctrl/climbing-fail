@@ -63,27 +63,31 @@ h1 {
 
 .gallery {
   padding: 28px;
-  display: block;
-  columns: 5;
-  column-gap: 24px;
+  display: grid;
+  gap: 24px;
+  align-items: start;
+}
+.gallery-column {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 .tile {
   display: block;
   width: 100%;
-  margin: 0 0 24px;
+  margin: 0;
   padding: 0;
   border: 2px solid var(--ink);
   background: white;
   cursor: pointer;
   overflow: hidden;
-  break-inside: avoid;
 }
-.tile:nth-child(6n+1) { transform: translateX(3px) rotate(-1.7deg); }
-.tile:nth-child(6n+2) { transform: translateY(6px) rotate(.9deg); }
-.tile:nth-child(6n+3) { transform: translateX(-3px) rotate(-.55deg); }
-.tile:nth-child(6n+4) { transform: translateY(-4px) rotate(1.45deg); }
-.tile:nth-child(6n+5) { transform: translateX(2px) rotate(-1deg); }
-.tile:nth-child(6n) { transform: translateY(3px) rotate(.45deg); }
+.gallery-column:nth-child(5n+1) .tile { transform: translateX(3px) rotate(-1.2deg); }
+.gallery-column:nth-child(5n+2) .tile { transform: translateY(3px) rotate(.7deg); }
+.gallery-column:nth-child(5n+3) .tile { transform: translateX(-2px) rotate(-.45deg); }
+.gallery-column:nth-child(5n+4) .tile { transform: translateY(-2px) rotate(1deg); }
+.gallery-column:nth-child(5n) .tile { transform: translateX(2px) rotate(-.7deg); }
 .tile img {
   display: block;
   width: 100%;
@@ -152,22 +156,14 @@ h1 {
 .comments input + input, .comments form button { border-left: 1px solid var(--ink); }
 .comments form button { font-family: var(--hand); font-size: .6rem; cursor: pointer; }
 
-@media (max-width: 1100px) {
-  .gallery { columns: 4; }
-}
-
-@media (max-width: 800px) {
-  .gallery { columns: 3; }
-}
-
 @media (max-width: 600px) {
   body { background-size: 58px 58px; }
   header { min-height: 108px; padding: 17px 14px 13px; }
   h1 { font-size: clamp(1.35rem, 7vw, 2rem); }
   .subtitle { margin-left: 2px; font-size: .52rem; }
   .upload { padding: 10px 12px 8px; font-size: .56rem; }
-  .gallery { columns: 2; column-gap: 15px; padding: 14px; }
-  .tile { margin-bottom: 15px; }
+  .gallery { gap: 15px; padding: 14px; }
+  .gallery-column { gap: 15px; }
   .comments form { grid-template-columns: 72px 1fr; }
   .comments form button { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--ink); }
 }
