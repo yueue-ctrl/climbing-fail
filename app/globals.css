@@ -99,18 +99,18 @@ h1 span + span { margin-top: .06em; }
 
 .gallery {
   margin-top: -96px;
-  padding: 0 28px 44px;
+  padding: 0 clamp(38px, 5vw, 86px) 58px;
   position: relative;
   z-index: 3;
   display: grid;
-  gap: 24px;
+  gap: clamp(30px, 3.4vw, 52px);
   align-items: start;
 }
 .gallery-column {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: clamp(30px, 3.4vw, 52px);
 }
 .tile {
   display: block;
@@ -383,8 +383,8 @@ h1 span + span { margin-top: .06em; }
   h1 { font-size: clamp(3.2rem, 18vw, 5.3rem); }
   .subtitle { margin-top: 20px; font-size: .95rem; }
   .upload { padding: 3px 1px 4px; font-size: .72rem; }
-  .gallery { margin-top: -64px; gap: 15px; padding: 0 14px 30px; }
-  .gallery-column { gap: 15px; }
+  .gallery { margin-top: -64px; gap: 22px; padding: 0 18px 38px; }
+  .gallery-column { gap: 22px; }
   .site-footer { padding: 13px 14px 15px; }
   .community-note { font-size: .62rem; }
   .font-credit { font-size: .48rem; }
