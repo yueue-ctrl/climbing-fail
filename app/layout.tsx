@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Climbing Fail",
   description: "A looping collection of climbing fails.",
-  icons: { icon: "/favicon.svg" },
+  icons: { icon: "/falling-legs.png" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
