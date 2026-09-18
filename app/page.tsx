@@ -214,11 +214,7 @@ export default function Home() {
     <main>
       <header>
         <div className="brand">
-          <h1>
-            <span>{gravityUndone ? "GRAVITY 0" : "GRAVITY 1"}</span>
-            <span className="versus">VS</span>
-            <span>{gravityUndone ? "US 1" : "US 0"}</span>
-          </h1>
+          <h1><span>{gravityUndone ? "GRAVITY: 0," : "GRAVITY: 1,"}</span><span>{gravityUndone ? "US: 1" : "US: 0"}</span></h1>
           <p className="subtitle">A CLIMBING FAIL MEME COLLECTION BY YUE &amp; FRIENDS</p>
         </div>
         <div className="header-actions">
