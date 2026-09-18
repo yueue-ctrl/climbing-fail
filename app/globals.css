@@ -59,13 +59,17 @@ header::after {
 h1 {
   margin: 0;
   padding-inline: .08em;
-  font: clamp(4.4rem, 10.5vw, 9.6rem)/.94 var(--hand);
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: .22em;
+  font: clamp(3.1rem, 7.2vw, 7.2rem)/.94 var(--hand);
   letter-spacing: -.055em;
   color: var(--ink);
   text-shadow: 0 0 18px white, 0 0 18px white;
+  white-space: nowrap;
 }
-h1 span { display: block; }
-h1 span + span { margin-top: .06em; }
+h1 .versus { font-size: .58em; letter-spacing: 0; }
 .subtitle {
   margin: 27px 0 0;
   color: var(--ink);
@@ -382,7 +386,7 @@ h1 span + span { margin-top: .06em; }
 @media (max-width: 600px) {
   header { min-height: 100svh; padding: 45px 14px 38px; gap: 24px; }
   header::before { background-position: center calc(100% - 24px); background-size: auto 78%; opacity: .28; }
-  h1 { font-size: clamp(3.2rem, 18vw, 5.3rem); }
+  h1 { font-size: clamp(1.85rem, 8.2vw, 3.15rem); }
   .subtitle { margin-top: 20px; font-size: .95rem; }
   .header-actions { gap: 20px; }
   .upload, .reverse-all { padding: 3px 1px 4px; font-size: .72rem; }
