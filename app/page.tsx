@@ -218,15 +218,15 @@ export default function Home() {
           <p className="subtitle">A CLIMBING FAIL MEME COLLECTION BY YUE &amp; FRIENDS</p>
         </div>
         <div className="header-actions">
+          <button className="reverse-all" type="button" aria-pressed={gravityUndone}
+            onClick={() => setGravityUndone((value) => !value)}>
+            {gravityUndone ? "RESTORE GRAVITY" : "UNDO GRAVITY"}
+          </button>
           <label className="upload">
             {uploading ? progress : "UPLOAD"}
             <input ref={fileRef} type="file" accept=".mov,video/quicktime,video/mp4,video/webm,image/*" disabled={uploading}
               onChange={(event) => event.target.files?.[0] && chooseFile(event.target.files[0])} />
           </label>
-          <button className="reverse-all" type="button" aria-pressed={gravityUndone}
-            onClick={() => setGravityUndone((value) => !value)}>
-            {gravityUndone ? "RESTORE GRAVITY" : "UNDO GRAVITY"}
-          </button>
         </div>
       </header>
 

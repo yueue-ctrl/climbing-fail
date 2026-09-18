@@ -75,7 +75,7 @@ h1 span + span { margin-top: .06em; }
   transform: rotate(.8deg);
   text-shadow: 0 0 12px white, 0 0 12px white;
 }
-.header-actions { display: flex; align-items: center; gap: 26px; }
+.header-actions { display: flex; align-items: center; justify-content: center; gap: 26px; }
 .upload, .reverse-all {
   flex: 0 0 auto;
   padding: 3px 2px 5px;
