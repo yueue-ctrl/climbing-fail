@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @font-face {
-  font-family: "Testtype Trackpad";
-  src: url("/fonts/testtype-trackpad.otf") format("opentype");
+  font-family: "Testtype 01";
+  src: url("/fonts/testtype-01.otf") format("opentype");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -11,20 +11,14 @@
 :root {
   --paper: #fff;
   --ink: #151515;
-  --grid: rgba(21, 21, 21, .22);
-  --hand: "Testtype Trackpad", cursive;
-  --plain: "Testtype Trackpad", cursive;
+  --hand: "Testtype 01", cursive;
+  --plain: "Testtype 01", cursive;
 }
 
 * { box-sizing: border-box; }
 html, body { margin: 0; min-width: 320px; min-height: 100%; color: var(--ink); font-family: var(--plain); }
 body {
   background-color: var(--paper);
-  background-image:
-    linear-gradient(to right, var(--grid) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
-  background-size: 92px 92px;
-  background-position: 18px 20px;
 }
 button, input { font: inherit; color: inherit; }
 button, a, label { -webkit-tap-highlight-color: transparent; }
@@ -127,10 +121,6 @@ h1 {
   position: relative;
   border: 2px solid var(--ink);
   background-color: white;
-  background-image:
-    linear-gradient(to right, rgba(21,21,21,.14) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(21,21,21,.14) 1px, transparent 1px);
-  background-size: 46px 46px;
   transform: rotate(-.35deg);
 }
 .detail > img { display: block; width: 100%; height: auto; max-height: 62vh; object-fit: contain; image-rendering: pixelated; filter: saturate(1.12) contrast(1.08); }
@@ -170,23 +160,31 @@ h1 {
 .comments input + input, .comments form button { border-left: 1px solid var(--ink); }
 .comments form button { font-family: var(--hand); font-size: .6rem; cursor: pointer; }
 
-.font-credit {
-  padding: 18px 28px;
+.site-footer {
+  padding: 16px 28px 18px;
   border-top: 1px solid var(--ink);
   background: rgba(255,255,255,.94);
-  font: .72rem/1.5 var(--plain);
-  text-align: center;
+  text-align: left;
+}
+.community-note {
+  margin: 0 0 5px;
+  font: .7rem/1.45 var(--plain);
+}
+.font-credit {
+  margin: 0;
+  font: .52rem/1.4 var(--plain);
 }
 
 @media (max-width: 600px) {
-  body { background-size: 58px 58px; }
   header { min-height: 108px; padding: 17px 14px 13px; }
   h1 { font-size: clamp(1.35rem, 7vw, 2rem); }
   .subtitle { margin-left: 2px; font-size: .52rem; }
   .upload { padding: 10px 12px 8px; font-size: .56rem; }
   .gallery { gap: 15px; padding: 14px; }
   .gallery-column { gap: 15px; }
-  .font-credit { padding: 14px; font-size: .64rem; }
+  .site-footer { padding: 13px 14px 15px; }
+  .community-note { font-size: .62rem; }
+  .font-credit { font-size: .48rem; }
   .comments form { grid-template-columns: 72px 1fr; }
   .comments form button { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--ink); }
 }

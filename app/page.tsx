@@ -171,8 +171,9 @@ export default function Home() {
           </article>
         </dialog>
       )}
-      <footer className="font-credit">
-        © Xiaoyuan Gao / notyourtypefoundry. All rights reserved.
+      <footer className="site-footer">
+        <p className="community-note">FOR OUR SMALL CIRCLE. PLEASE KEEP THIS SPACE KIND. CONTACT YUE IF THERE IS A PROBLEM.</p>
+        <p className="font-credit">© Xiaoyuan Gao / notyourtypefoundry. All rights reserved.</p>
       </footer>
     </main>
   );
