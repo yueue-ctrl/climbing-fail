@@ -2,6 +2,7 @@
 
 import { SyntheticEvent, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { upload as uploadBlob } from "@vercel/blob/client";
+import Image from "next/image";
 import { fileToPixelGif } from "@/lib/gif";
 
 type Meme = {
@@ -121,6 +122,9 @@ export default function Home() {
 
   return (
     <main>
+      <nav className="topbar" aria-label="Climbing Fail home">
+        <Image className="nav-logo" src="/falling-legs.png" alt="Climber falling logo" width={48} height={48} priority />
+      </nav>
       <header>
         <div className="brand">
           <h1><span>GRAVITY: 1,</span><span>US: 0</span></h1>

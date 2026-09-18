@@ -23,9 +23,26 @@ body {
 button, input { font: inherit; color: inherit; }
 button, a, label { -webkit-tap-highlight-color: transparent; }
 
+.topbar {
+  height: 70px;
+  padding: 11px 22px;
+  display: flex;
+  align-items: center;
+  background: white;
+}
+.nav-logo {
+  display: block;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  object-position: center bottom;
+}
+
 header {
-  min-height: 420px;
+  min-height: calc(100svh - 70px);
   padding: 62px 28px 54px;
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -33,6 +50,15 @@ header {
   gap: 25px;
   background: rgba(255,255,255,.93);
 }
+header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/falling-legs.png") center bottom / auto 91% no-repeat;
+  opacity: .32;
+  pointer-events: none;
+}
+.brand, .upload { position: relative; z-index: 1; }
 .brand { text-align: center; transform: rotate(-.7deg); }
 h1 {
   margin: 0;
@@ -40,6 +66,7 @@ h1 {
   font: clamp(4.4rem, 10.5vw, 9.6rem)/.94 var(--hand);
   letter-spacing: -.055em;
   color: var(--ink);
+  text-shadow: 0 0 18px white, 0 0 18px white;
 }
 h1 span { display: block; }
 h1 span + span { margin-top: .06em; }
@@ -49,6 +76,7 @@ h1 span + span { margin-top: .06em; }
   font: clamp(1rem, 1.9vw, 1.55rem)/1.5 var(--hand);
   letter-spacing: .06em;
   transform: rotate(.8deg);
+  text-shadow: 0 0 12px white, 0 0 12px white;
 }
 .upload {
   flex: 0 0 auto;
@@ -186,7 +214,10 @@ h1 span + span { margin-top: .06em; }
 }
 
 @media (max-width: 600px) {
-  header { min-height: 340px; padding: 45px 14px 38px; gap: 24px; }
+  .topbar { height: 58px; padding: 8px 14px; }
+  .nav-logo { width: 42px; height: 42px; }
+  header { min-height: calc(100svh - 58px); padding: 45px 14px 38px; gap: 24px; }
+  header::before { background-size: auto 78%; opacity: .28; }
   h1 { font-size: clamp(3.2rem, 18vw, 5.3rem); }
   .subtitle { margin-top: 20px; font-size: .78rem; }
   .upload { padding: 3px 1px 4px; font-size: .72rem; }
