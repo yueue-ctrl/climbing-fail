@@ -43,7 +43,18 @@ header::before {
   opacity: .32;
   pointer-events: none;
 }
-.brand, .upload { position: relative; z-index: 1; }
+header::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 180px;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,.72) 48%, white 88%);
+  pointer-events: none;
+}
+.brand, .upload { position: relative; z-index: 2; }
 .brand { text-align: center; transform: rotate(-.7deg); }
 h1 {
   margin: 0;
@@ -87,7 +98,10 @@ h1 span + span { margin-top: .06em; }
 }
 
 .gallery {
-  padding: 44px 28px;
+  margin-top: -96px;
+  padding: 0 28px 44px;
+  position: relative;
+  z-index: 3;
   display: grid;
   gap: 24px;
   align-items: start;
@@ -205,7 +219,7 @@ h1 span + span { margin-top: .06em; }
   h1 { font-size: clamp(3.2rem, 18vw, 5.3rem); }
   .subtitle { margin-top: 20px; font-size: .95rem; }
   .upload { padding: 3px 1px 4px; font-size: .72rem; }
-  .gallery { gap: 15px; padding: 30px 14px; }
+  .gallery { margin-top: -64px; gap: 15px; padding: 0 14px 30px; }
   .gallery-column { gap: 15px; }
   .site-footer { padding: 13px 14px 15px; }
   .community-note { font-size: .62rem; }
