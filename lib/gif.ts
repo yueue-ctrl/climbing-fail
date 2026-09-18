@@ -1,7 +1,8 @@
-const MAX_EDGE = 240;
-const PIXEL_RATIO = 1.5;
+const MAX_EDGE = 480;
 const FPS = 8;
 const MAX_SECONDS = 3;
+
+export type CaptionPosition = "top" | "middle" | "bottom";
 
 function word(bytes: number[], value: number) {
   bytes.push(value & 255, (value >> 8) & 255);
@@ -108,33 +109,68 @@ export function encodeGif(frames: Uint8ClampedArray[], width: number, height: nu
   return new Blob([new Uint8Array(bytes).buffer], { type: "image/gif" });
 }
 
-function sizeCanvases(width: number, height: number, low: HTMLCanvasElement, output: HTMLCanvasElement) {
+function sizeCanvas(width: number, height: number, output: HTMLCanvasElement) {
   const scale = MAX_EDGE / Math.max(width, height);
   output.width = Math.max(1, Math.round(width * scale));
   output.height = Math.max(1, Math.round(height * scale));
-  low.width = Math.max(1, Math.round(output.width / PIXEL_RATIO));
-  low.height = Math.max(1, Math.round(output.height / PIXEL_RATIO));
 }
 
-function drawFrame(source: CanvasImageSource, low: HTMLCanvasElement, output: HTMLCanvasElement) {
-  const lowContext = low.getContext("2d", { willReadFrequently: true })!;
-  const outputContext = output.getContext("2d", { willReadFrequently: true })!;
-  lowContext.clearRect(0, 0, low.width, low.height);
-  lowContext.drawImage(source, 0, 0, low.width, low.height);
-  const pixels = lowContext.getImageData(0, 0, low.width, low.height);
-  for (let index = 0; index < pixels.data.length; index += 4) {
-    const red = pixels.data[index];
-    const green = pixels.data[index + 1];
-    const blue = pixels.data[index + 2];
-    const gray = red * 0.299 + green * 0.587 + blue * 0.114;
-    pixels.data[index] = Math.max(0, Math.min(255, (gray + (red - gray) * 1.28 - 128) * 1.16 + 128));
-    pixels.data[index + 1] = Math.max(0, Math.min(255, (gray + (green - gray) * 1.28 - 128) * 1.16 + 128));
-    pixels.data[index + 2] = Math.max(0, Math.min(255, (gray + (blue - gray) * 1.28 - 128) * 1.16 + 128));
+function wrapCaption(context: CanvasRenderingContext2D, caption: string, maxWidth: number) {
+  const lines: string[] = [];
+  for (const paragraph of caption.trim().split(/\n/)) {
+    const words = paragraph.trim().split(/\s+/).filter(Boolean);
+    if (words.length === 0) {
+      lines.push("");
+      continue;
+    }
+    let line = words[0];
+    for (const word of words.slice(1)) {
+      const candidate = `${line} ${word}`;
+      if (context.measureText(candidate).width <= maxWidth) line = candidate;
+      else {
+        lines.push(line);
+        line = word;
+      }
+    }
+    lines.push(line);
   }
-  lowContext.putImageData(pixels, 0, 0);
-  outputContext.imageSmoothingEnabled = false;
+  return lines.slice(0, 6);
+}
+
+function drawCaption(context: CanvasRenderingContext2D, caption: string, position: CaptionPosition) {
+  if (!caption.trim()) return;
+  const fontSize = Math.max(20, Math.round(context.canvas.width * 0.082));
+  const lineHeight = fontSize * 1.08;
+  context.font = `900 ${fontSize}px Arial, Helvetica, sans-serif`;
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.lineJoin = "round";
+  context.miterLimit = 2;
+  context.lineWidth = Math.max(4, fontSize * 0.15);
+  context.strokeStyle = "#000";
+  context.fillStyle = "#fff";
+  const lines = wrapCaption(context, caption, context.canvas.width * 0.88);
+  const totalHeight = lines.length * lineHeight;
+  const padding = fontSize * 0.75;
+  const centerY = position === "top"
+    ? padding + totalHeight / 2
+    : position === "bottom"
+      ? context.canvas.height - padding - totalHeight / 2
+      : context.canvas.height / 2;
+  lines.forEach((line, index) => {
+    const y = centerY + (index - (lines.length - 1) / 2) * lineHeight;
+    context.strokeText(line, context.canvas.width / 2, y);
+    context.fillText(line, context.canvas.width / 2, y);
+  });
+}
+
+function drawFrame(source: CanvasImageSource, output: HTMLCanvasElement, caption: string, position: CaptionPosition) {
+  const outputContext = output.getContext("2d", { willReadFrequently: true })!;
+  outputContext.imageSmoothingEnabled = true;
+  outputContext.imageSmoothingQuality = "high";
   outputContext.clearRect(0, 0, output.width, output.height);
-  outputContext.drawImage(low, 0, 0, output.width, output.height);
+  outputContext.drawImage(source, 0, 0, output.width, output.height);
+  drawCaption(outputContext, caption, position);
   return outputContext.getImageData(0, 0, output.width, output.height).data;
 }
 
@@ -153,9 +189,13 @@ function seek(video: HTMLVideoElement, time: number) {
   });
 }
 
-export async function fileToPixelGif(file: File, onProgress: (value: number) => void) {
+export async function fileToGif(
+  file: File,
+  onProgress: (value: number) => void,
+  caption = "",
+  position: CaptionPosition = "middle",
+) {
   if (file.size > 80 * 1024 * 1024) throw new Error("FILE IS TOO LARGE");
-  const low = document.createElement("canvas");
   const output = document.createElement("canvas");
   const frames: Uint8ClampedArray[] = [];
 
@@ -170,19 +210,19 @@ export async function fileToPixelGif(file: File, onProgress: (value: number) => 
       video.addEventListener("loadeddata", () => resolve(), { once: true });
       video.addEventListener("error", () => reject(new Error("VIDEO FORMAT NOT SUPPORTED")), { once: true });
     });
-    sizeCanvases(video.videoWidth, video.videoHeight, low, output);
+    sizeCanvas(video.videoWidth, video.videoHeight, output);
     const duration = Math.min(video.duration || 1, MAX_SECONDS);
     const count = Math.max(1, Math.ceil(duration * FPS));
     for (let index = 0; index < count; index++) {
       await seek(video, Math.min(index / FPS, Math.max(0, duration - 0.02)));
-      frames.push(drawFrame(video, low, output));
+      frames.push(drawFrame(video, output, caption, position));
       onProgress(Math.round(((index + 1) / count) * 90));
     }
     URL.revokeObjectURL(url);
   } else if (file.type.startsWith("image/")) {
     const bitmap = await createImageBitmap(file);
-    sizeCanvases(bitmap.width, bitmap.height, low, output);
-    frames.push(drawFrame(bitmap, low, output));
+    sizeCanvas(bitmap.width, bitmap.height, output);
+    frames.push(drawFrame(bitmap, output, caption, position));
     bitmap.close();
     onProgress(90);
   } else {
@@ -191,7 +231,7 @@ export async function fileToPixelGif(file: File, onProgress: (value: number) => 
 
   onProgress(96);
   const gif = encodeGif(frames, output.width, output.height, Math.round(100 / FPS));
-  if (gif.size > 6 * 1024 * 1024) throw new Error("GIF IS TOO LARGE");
+  if (gif.size > 12 * 1024 * 1024) throw new Error("GIF IS TOO LARGE");
   onProgress(100);
   return gif;
 }

@@ -2,7 +2,7 @@
 
 import { SyntheticEvent, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { upload as uploadBlob } from "@vercel/blob/client";
-import { fileToPixelGif } from "@/lib/gif";
+import { fileToGif, type CaptionPosition } from "@/lib/gif";
 
 type Meme = {
   id: string;
@@ -47,6 +47,10 @@ export default function Home() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [adminOpen, setAdminOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [caption, setCaption] = useState("");
+  const [captionPosition, setCaptionPosition] = useState<CaptionPosition>("middle");
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState("");
   const columnCount = useSyncExternalStore(subscribeToResize, getColumnCount, () => 5);
@@ -92,11 +96,33 @@ export default function Home() {
     };
   }, []);
 
-  async function upload(file: File) {
+  function chooseFile(file: File) {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setCaption("");
+    setCaptionPosition("middle");
+    setPreviewUrl(URL.createObjectURL(file));
+    setPendingFile(file);
+  }
+
+  function closeEditor() {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl("");
+    setPendingFile(null);
+    if (fileRef.current) fileRef.current.value = "";
+  }
+
+  async function upload() {
+    if (!pendingFile) return;
+    const file = pendingFile;
+    const text = caption;
+    const position = captionPosition;
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl("");
+    setPendingFile(null);
     setUploading(true);
     try {
       setProgress("PROCESSING... 0%");
-      const gif = await fileToPixelGif(file, (value) => setProgress(`PROCESSING... ${value}%`));
+      const gif = await fileToGif(file, (value) => setProgress(`PROCESSING... ${value}%`), text, position);
       setProgress("UPLOADING...");
       const id = crypto.randomUUID();
       const filename = file.name.replace(/\.[^.]+$/, "") + ".gif";
@@ -173,11 +199,43 @@ export default function Home() {
         <label className="upload">
           {uploading ? progress : "UPLOAD"}
           <input ref={fileRef} type="file" accept=".mov,video/quicktime,video/mp4,video/webm,image/*" disabled={uploading}
-            onChange={(event) => event.target.files?.[0] && upload(event.target.files[0])} />
+            onChange={(event) => event.target.files?.[0] && chooseFile(event.target.files[0])} />
         </label>
       </header>
 
       {progress && <div className="status">{progress}</div>}
+      {pendingFile && previewUrl && (
+        <dialog open className="meme-editor" aria-label="Edit meme text">
+          <section className="editor-panel">
+            <div className="editor-preview">
+              {pendingFile.type.startsWith("video/") || /\.mov$/i.test(pendingFile.name) ? (
+                <video src={previewUrl} autoPlay muted loop playsInline />
+              ) : (
+                // oxlint-disable-next-line next/no-img-element
+                <img src={previewUrl} alt="Meme preview" />
+              )}
+              {caption.trim() && <p className={`caption-preview caption-${captionPosition}`}>{caption}</p>}
+            </div>
+            <div className="editor-tools">
+              <label>
+                MEME TEXT
+                <textarea value={caption} onChange={(event) => setCaption(event.target.value)}
+                  placeholder="TYPE SOMETHING..." maxLength={180} autoFocus />
+              </label>
+              <div className="caption-position" aria-label="Text position">
+                {(["top", "middle", "bottom"] as CaptionPosition[]).map((position) => (
+                  <button type="button" className={captionPosition === position ? "active" : ""}
+                    key={position} onClick={() => setCaptionPosition(position)}>{position.toUpperCase()}</button>
+                ))}
+              </div>
+              <div className="editor-actions">
+                <button type="button" onClick={closeEditor}>CANCEL</button>
+                <button type="button" onClick={upload}>MAKE GIF</button>
+              </div>
+            </div>
+          </section>
+        </dialog>
+      )}
       <section className="gallery" style={{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }} aria-label="Climbing fail GIFs">
         {Array.from({ length: columnCount }, (_, column) => (
           <div className="gallery-column" key={column}>

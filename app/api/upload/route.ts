@@ -10,7 +10,7 @@ export async function POST(request: Request) {
         if (!/^uploads\/[a-f0-9-]{36}\.gif$/i.test(pathname)) throw new Error("INVALID UPLOAD PATH");
         return {
           allowedContentTypes: ["image/gif"],
-          maximumSizeInBytes: 6 * 1024 * 1024,
+          maximumSizeInBytes: 12 * 1024 * 1024,
           addRandomSuffix: false,
         };
       },
