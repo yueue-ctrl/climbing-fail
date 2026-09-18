@@ -51,6 +51,7 @@ export default function Home() {
   const [previewUrl, setPreviewUrl] = useState("");
   const [caption, setCaption] = useState("");
   const [captionPosition, setCaptionPosition] = useState<CaptionPosition>("middle");
+  const [captionScale, setCaptionScale] = useState(1);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState("");
   const columnCount = useSyncExternalStore(subscribeToResize, getColumnCount, () => 5);
@@ -106,6 +107,7 @@ export default function Home() {
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setCaption("");
     setCaptionPosition("middle");
+    setCaptionScale(1);
     setPreviewUrl(URL.createObjectURL(file));
     setPendingFile(file);
   }
@@ -122,13 +124,14 @@ export default function Home() {
     const file = pendingFile;
     const text = caption;
     const position = captionPosition;
+    const textScale = captionScale;
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl("");
     setPendingFile(null);
     setUploading(true);
     try {
       setProgress("PROCESSING... 0%");
-      const gif = await fileToGif(file, (value) => setProgress(`PROCESSING... ${value}%`), text, position);
+      const gif = await fileToGif(file, (value) => setProgress(`PROCESSING... ${value}%`), text, position, textScale);
       setProgress("UPLOADING...");
       const id = crypto.randomUUID();
       const filename = file.name.replace(/\.[^.]+$/, "") + ".gif";
@@ -220,7 +223,10 @@ export default function Home() {
                 // oxlint-disable-next-line next/no-img-element
                 <img src={previewUrl} alt="Meme preview" />
               )}
-              {caption.trim() && <p className={`caption-preview caption-${captionPosition}`}>{caption}</p>}
+              {caption.trim() && <p className={`caption-preview caption-${captionPosition}`}
+                style={{ fontSize: `clamp(${1.6 * captionScale}rem, ${4.2 * captionScale}vw, ${4 * captionScale}rem)` }}>
+                {caption}
+              </p>}
             </div>
             <div className="editor-tools">
               <label>
@@ -234,6 +240,11 @@ export default function Home() {
                     key={position} onClick={() => setCaptionPosition(position)}>{position.toUpperCase()}</button>
                 ))}
               </div>
+              <label className="caption-size">
+                <span>TEXT SIZE <b>{Math.round(captionScale * 100)}%</b></span>
+                <input type="range" min="0.6" max="1.6" step="0.1" value={captionScale}
+                  onChange={(event) => setCaptionScale(Number(event.target.value))} />
+              </label>
               <div className="editor-actions">
                 <button type="button" onClick={closeEditor}>CANCEL</button>
                 <button type="button" onClick={upload}>MAKE GIF</button>

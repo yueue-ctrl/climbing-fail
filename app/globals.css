@@ -210,6 +210,15 @@ h1 span + span { margin-top: .06em; }
   cursor: pointer;
 }
 .caption-position button.active { border-bottom-color: var(--ink); }
+.caption-size span { display: flex; justify-content: space-between; }
+.caption-size b { font-weight: 400; }
+.caption-size input {
+  width: 100%;
+  height: 18px;
+  padding: 0;
+  accent-color: var(--ink);
+  cursor: ew-resize;
+}
 .editor-actions { justify-content: space-between; margin-top: 8px; }
 .editor-actions button { border-bottom-color: var(--ink); font-size: .68rem; }
 

@@ -137,9 +137,9 @@ function wrapCaption(context: CanvasRenderingContext2D, caption: string, maxWidt
   return lines.slice(0, 6);
 }
 
-function drawCaption(context: CanvasRenderingContext2D, caption: string, position: CaptionPosition) {
+function drawCaption(context: CanvasRenderingContext2D, caption: string, position: CaptionPosition, scale: number) {
   if (!caption.trim()) return;
-  const fontSize = Math.max(20, Math.round(context.canvas.width * 0.082));
+  const fontSize = Math.max(14, Math.round(context.canvas.width * 0.082 * scale));
   const lineHeight = fontSize * 1.08;
   context.font = `900 ${fontSize}px Arial, Helvetica, sans-serif`;
   context.textAlign = "center";
@@ -164,13 +164,19 @@ function drawCaption(context: CanvasRenderingContext2D, caption: string, positio
   });
 }
 
-function drawFrame(source: CanvasImageSource, output: HTMLCanvasElement, caption: string, position: CaptionPosition) {
+function drawFrame(
+  source: CanvasImageSource,
+  output: HTMLCanvasElement,
+  caption: string,
+  position: CaptionPosition,
+  captionScale: number,
+) {
   const outputContext = output.getContext("2d", { willReadFrequently: true })!;
   outputContext.imageSmoothingEnabled = true;
   outputContext.imageSmoothingQuality = "high";
   outputContext.clearRect(0, 0, output.width, output.height);
   outputContext.drawImage(source, 0, 0, output.width, output.height);
-  drawCaption(outputContext, caption, position);
+  drawCaption(outputContext, caption, position, captionScale);
   return outputContext.getImageData(0, 0, output.width, output.height).data;
 }
 
@@ -194,6 +200,7 @@ export async function fileToGif(
   onProgress: (value: number) => void,
   caption = "",
   position: CaptionPosition = "middle",
+  captionScale = 1,
 ) {
   if (file.size > 80 * 1024 * 1024) throw new Error("FILE IS TOO LARGE");
   const output = document.createElement("canvas");
@@ -215,14 +222,14 @@ export async function fileToGif(
     const count = Math.max(1, Math.ceil(duration * FPS));
     for (let index = 0; index < count; index++) {
       await seek(video, Math.min(index / FPS, Math.max(0, duration - 0.02)));
-      frames.push(drawFrame(video, output, caption, position));
+      frames.push(drawFrame(video, output, caption, position, captionScale));
       onProgress(Math.round(((index + 1) / count) * 90));
     }
     URL.revokeObjectURL(url);
   } else if (file.type.startsWith("image/")) {
     const bitmap = await createImageBitmap(file);
     sizeCanvas(bitmap.width, bitmap.height, output);
-    frames.push(drawFrame(bitmap, output, caption, position));
+    frames.push(drawFrame(bitmap, output, caption, position, captionScale));
     bitmap.close();
     onProgress(90);
   } else {
