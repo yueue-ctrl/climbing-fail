@@ -54,7 +54,7 @@ header::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: url("/falling-legs.png") center bottom / auto 91% no-repeat;
+  background: url("/falling-legs.png") center calc(100% - 36px) / auto 91% no-repeat;
   opacity: .32;
   pointer-events: none;
 }
@@ -73,8 +73,9 @@ h1 span + span { margin-top: .06em; }
 .subtitle {
   margin: 27px 0 0;
   color: var(--ink);
-  font: clamp(1rem, 1.9vw, 1.55rem)/1.5 var(--hand);
-  letter-spacing: .06em;
+  font: clamp(1.25rem, 2.25vw, 1.9rem)/1.45 var(--hand);
+  letter-spacing: .045em;
+  -webkit-text-stroke: .35px currentColor;
   transform: rotate(.8deg);
   text-shadow: 0 0 12px white, 0 0 12px white;
 }
@@ -217,9 +218,9 @@ h1 span + span { margin-top: .06em; }
   .topbar { height: 58px; padding: 8px 14px; }
   .nav-logo { width: 42px; height: 42px; }
   header { min-height: calc(100svh - 58px); padding: 45px 14px 38px; gap: 24px; }
-  header::before { background-size: auto 78%; opacity: .28; }
+  header::before { background-position: center calc(100% - 24px); background-size: auto 78%; opacity: .28; }
   h1 { font-size: clamp(3.2rem, 18vw, 5.3rem); }
-  .subtitle { margin-top: 20px; font-size: .78rem; }
+  .subtitle { margin-top: 20px; font-size: .95rem; }
   .upload { padding: 3px 1px 4px; font-size: .72rem; }
   .gallery { gap: 15px; padding: 30px 14px; }
   .gallery-column { gap: 15px; }
