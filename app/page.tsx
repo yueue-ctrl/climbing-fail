@@ -123,11 +123,11 @@ export default function Home() {
     <main>
       <header>
         <div className="brand">
-          <h1>GRAVITY: 1, US: 0</h1>
+          <h1><span>GRAVITY: 1,</span><span>US: 0</span></h1>
           <p className="subtitle">A CLIMBING FAIL MEME COLLECTION BY YUE &amp; FRIENDS</p>
         </div>
         <label className="upload">
-          {uploading ? progress : "+ ADD"}
+          {uploading ? progress : "UPLOAD"}
           <input ref={fileRef} type="file" accept=".mov,video/quicktime,video/mp4,video/webm,image/*" disabled={uploading}
             onChange={(event) => event.target.files?.[0] && upload(event.target.files[0])} />
         </label>

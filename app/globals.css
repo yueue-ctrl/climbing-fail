@@ -24,8 +24,8 @@ button, input { font: inherit; color: inherit; }
 button, a, label { -webkit-tap-highlight-color: transparent; }
 
 header {
-  min-height: 300px;
-  padding: 48px 28px 42px;
+  min-height: 420px;
+  padding: 62px 28px 54px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -37,29 +37,32 @@ header {
 h1 {
   margin: 0;
   padding-inline: .08em;
-  font: clamp(3.2rem, 8.3vw, 7.6rem)/1.06 var(--hand);
+  font: clamp(4.4rem, 10.5vw, 9.6rem)/.94 var(--hand);
   letter-spacing: -.055em;
   color: var(--ink);
 }
+h1 span { display: block; }
+h1 span + span { margin-top: .06em; }
 .subtitle {
-  margin: 17px 0 0;
+  margin: 27px 0 0;
   color: var(--ink);
-  font: clamp(.9rem, 1.7vw, 1.35rem)/1.55 var(--hand);
+  font: clamp(1rem, 1.9vw, 1.55rem)/1.5 var(--hand);
   letter-spacing: .06em;
   transform: rotate(.8deg);
 }
 .upload {
   flex: 0 0 auto;
-  padding: 11px 18px 9px;
-  border: 2px solid var(--ink);
-  border-radius: 48% 52% 44% 56% / 54% 43% 57% 46%;
-  background: white;
+  padding: 3px 2px 5px;
+  border: 0;
+  border-bottom: 2px solid currentColor;
+  border-radius: 0;
+  background: transparent;
   color: var(--ink);
-  font: .76rem/1.4 var(--hand);
+  font: .9rem/1.4 var(--hand);
   cursor: pointer;
   transform: rotate(-1.5deg);
 }
-.upload:hover { color: white; background: var(--ink); transform: rotate(1deg) scale(1.04); }
+.upload:hover { transform: rotate(1deg) scale(1.05); }
 .upload input { display: none; }
 
 .status {
@@ -183,10 +186,10 @@ h1 {
 }
 
 @media (max-width: 600px) {
-  header { min-height: 240px; padding: 36px 14px 30px; gap: 20px; }
-  h1 { font-size: clamp(2.45rem, 15vw, 4.1rem); }
-  .subtitle { margin-top: 13px; font-size: .7rem; }
-  .upload { padding: 9px 14px 7px; font-size: .62rem; }
+  header { min-height: 340px; padding: 45px 14px 38px; gap: 24px; }
+  h1 { font-size: clamp(3.2rem, 18vw, 5.3rem); }
+  .subtitle { margin-top: 20px; font-size: .78rem; }
+  .upload { padding: 3px 1px 4px; font-size: .72rem; }
   .gallery { gap: 15px; padding: 30px 14px; }
   .gallery-column { gap: 15px; }
   .site-footer { padding: 13px 14px 15px; }
