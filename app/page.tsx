@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { SyntheticEvent, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { upload as uploadBlob } from "@vercel/blob/client";
 import { fileToPixelGif } from "@/lib/gif";
 
 type Meme = {
@@ -31,28 +32,31 @@ function arrangeMemes(items: Meme[]) {
   return [latest, ...shuffle(items.filter((item) => item.id !== latest.id))];
 }
 
+function getColumnCount() {
+  return window.innerWidth <= 600 ? 2 : window.innerWidth <= 800 ? 3 : window.innerWidth <= 1100 ? 4 : 5;
+}
+
+function subscribeToResize(callback: () => void) {
+  window.addEventListener("resize", callback);
+  return () => window.removeEventListener("resize", callback);
+}
+
 export default function Home() {
   const [memes, setMemes] = useState<Meme[]>([]);
   const [selected, setSelected] = useState<Meme | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState("");
-  const [columnCount, setColumnCount] = useState(5);
+  const columnCount = useSyncExternalStore(subscribeToResize, getColumnCount, () => 5);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  async function loadMemes() {
-    const response = await fetch("/api/memes");
-    if (response.ok) setMemes(arrangeMemes(await response.json()));
-  }
-
-  useEffect(() => { loadMemes().catch(() => undefined); }, []);
   useEffect(() => {
-    const updateColumns = () => setColumnCount(
-      window.innerWidth <= 600 ? 2 : window.innerWidth <= 800 ? 3 : window.innerWidth <= 1100 ? 4 : 5,
-    );
-    updateColumns();
-    window.addEventListener("resize", updateColumns);
-    return () => window.removeEventListener("resize", updateColumns);
+    let active = true;
+    fetch("/api/memes")
+      .then(async (response) => response.ok ? await response.json() as Meme[] : [])
+      .then((items) => { if (active) setMemes(arrangeMemes(items)); })
+      .catch(() => undefined);
+    return () => { active = false; };
   }, []);
   useEffect(() => {
     if (!selected) return;
@@ -68,10 +72,18 @@ export default function Home() {
       setProgress("PROCESSING... 0%");
       const gif = await fileToPixelGif(file, (value) => setProgress(`PROCESSING... ${value}%`));
       setProgress("UPLOADING...");
-      const form = new FormData();
-      form.set("file", gif, file.name.replace(/\.[^.]+$/, "") + ".gif");
-      form.set("category", "OTHER");
-      const response = await fetch("/api/memes", { method: "POST", body: form });
+      const id = crypto.randomUUID();
+      const filename = file.name.replace(/\.[^.]+$/, "") + ".gif";
+      const blob = await uploadBlob(`uploads/${id}.gif`, gif, {
+        access: "public",
+        contentType: "image/gif",
+        handleUploadUrl: "/api/upload",
+      });
+      const response = await fetch("/api/memes", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ id, filename, pathname: blob.pathname, url: blob.url }),
+      });
       if (!response.ok) throw new Error(await response.text());
       const saved = (await response.json()) as Meme;
       setMemes((items) => [saved, ...items.filter((item) => item.id !== saved.id)]);
@@ -94,7 +106,7 @@ export default function Home() {
     setSelected((item) => (item ? { ...item, likes } : item));
   }
 
-  async function comment(event: FormEvent<HTMLFormElement>) {
+  async function comment(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!selected) return;
     const response = await fetch(`/api/memes/${selected.id}/comments`, {
@@ -127,6 +139,7 @@ export default function Home() {
           <div className="gallery-column" key={column}>
             {memes.filter((_, index) => index % columnCount === column).map((meme) => (
               <button className="tile" key={meme.id} onClick={() => setSelected(meme)} aria-label="Open GIF">
+                {/* oxlint-disable-next-line next/no-img-element */}
                 <img src={meme.url} alt="Looping climbing fail" />
               </button>
             ))}
@@ -135,17 +148,17 @@ export default function Home() {
       </section>
 
       {selected && (
-        <div className="overlay" role="dialog" aria-modal="true" aria-label="GIF details"
-          onMouseDown={(event) => event.target === event.currentTarget && setSelected(null)}>
+        <dialog open className="overlay" aria-label="GIF details">
           <article className="detail">
             <button className="close" type="button" onClick={(event) => {
               event.stopPropagation();
               setSelected(null);
             }} aria-label="Close">×</button>
+            {/* oxlint-disable-next-line next/no-img-element */}
             <img src={selected.url} alt="Looping climbing fail" />
             <div className="actions">
               <button onClick={like}>♥ {selected.likes}</button>
-              <a href={`${selected.url}?download=1`} download={selected.filename}>DOWNLOAD</a>
+              <a href={`/api/media/${encodeURIComponent(selected.id)}?download=1`}>DOWNLOAD</a>
             </div>
             <div className="comments">
               {comments.map((item) => <p key={item.id}><b>{item.author}</b> {item.body}</p>)}
@@ -156,7 +169,7 @@ export default function Home() {
               </form>
             </div>
           </article>
-        </div>
+        </dialog>
       )}
     </main>
   );

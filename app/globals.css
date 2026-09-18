@@ -4,7 +4,7 @@
   --paper: #fff;
   --ink: #151515;
   --grid: rgba(21, 21, 21, .22);
-  --hand: "Rock Salt", "Bradley Hand", cursive;
+  --hand: "Bradley Hand", "Comic Sans MS", cursive;
   --plain: Arial, Helvetica, sans-serif;
 }
 
@@ -99,6 +99,12 @@ h1 {
 .overlay {
   position: fixed;
   inset: 0;
+  width: 100vw;
+  max-width: none;
+  height: 100vh;
+  max-height: none;
+  margin: 0;
+  border: 0;
   z-index: 10;
   padding: 20px;
   display: grid;

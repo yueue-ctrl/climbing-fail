@@ -1,53 +1,47 @@
-import { getDb, getFiles } from "@/db";
-
-export const runtime = "edge";
+import { del } from "@vercel/blob";
+import { ensureSchema, getDb } from "@/db";
 
 const seed = [
-  { id: "seed-1", category: "SLIP", url: "/gifs/climbing-fail-01.gif", filename: "climbing-fail-01.gif" },
-  { id: "seed-2", category: "SWING", url: "/gifs/climbing-fail-02.gif", filename: "climbing-fail-02.gif" },
-  { id: "seed-3", category: "GRAVITY", url: "/gifs/climbing-fail-03.gif", filename: "climbing-fail-03.gif" },
-  { id: "seed-4", category: "GRAVITY", url: "/gifs/climbing-fail-04.gif", filename: "climbing-fail-04.gif" },
-  { id: "seed-5", category: "SLIP", url: "/gifs/climbing-fail-05.gif", filename: "climbing-fail-05.gif" },
+  { id: "seed-1", category: "OTHER", url: "/gifs/climbing-fail-01.gif", filename: "climbing-fail-01.gif" },
+  { id: "seed-2", category: "OTHER", url: "/gifs/climbing-fail-02.gif", filename: "climbing-fail-02.gif" },
+  { id: "seed-3", category: "OTHER", url: "/gifs/climbing-fail-03.gif", filename: "climbing-fail-03.gif" },
+  { id: "seed-4", category: "OTHER", url: "/gifs/climbing-fail-04.gif", filename: "climbing-fail-04.gif" },
+  { id: "seed-5", category: "OTHER", url: "/gifs/climbing-fail-05.gif", filename: "climbing-fail-05.gif" },
 ];
 
-type UploadRow = {
-  id: string;
-  category: string;
-  filename: string;
-  object_key: string;
-  likes: number | null;
-  created_at: number;
-};
+type UploadInput = { id?: string; filename?: string; pathname?: string; url?: string };
 
-const hiddenBrokenUploads = new Set([
-  "0b255061-6cc8-432a-b0b9-89ea9545d9b8",
-  "baed6e8c-1c80-402a-8c23-59907d8f0603",
-]);
-
-async function digest(buffer: ArrayBuffer) {
-  const hash = await crypto.subtle.digest("SHA-256", buffer);
-  return Array.from(new Uint8Array(hash), (byte) => byte.toString(16).padStart(2, "0")).join("");
+function validBlob(input: UploadInput) {
+  if (!input.id || !/^[a-f0-9-]{36}$/i.test(input.id)) return false;
+  if (input.pathname !== `uploads/${input.id}.gif`) return false;
+  if (!input.url || !input.filename) return false;
+  try {
+    return new URL(input.url).hostname.endsWith(".blob.vercel-storage.com");
+  } catch {
+    return false;
+  }
 }
 
 export async function GET() {
   try {
-    const result = await getDb().prepare(
-      `SELECT m.id, m.category, m.filename, m.object_key, m.created_at, COALESCE(e.likes, 0) AS likes
-       FROM memes m LEFT JOIN engagement e ON e.meme_id = m.id
-       ORDER BY m.created_at DESC`,
-    ).all<UploadRow>();
-    const seedLikes = await getDb().prepare(
-      `SELECT meme_id, likes FROM engagement WHERE meme_id LIKE 'seed-%'`,
-    ).all<{ meme_id: string; likes: number }>();
-    const likes = new Map(seedLikes.results.map((row) => [row.meme_id, row.likes]));
+    await ensureSchema();
+    const sql = getDb();
+    const uploads = await sql`
+      SELECT m.id, m.category, m.filename, m.object_url AS url, m.created_at,
+             COALESCE(e.likes, 0) AS likes
+      FROM memes m LEFT JOIN engagement e ON e.meme_id = m.id
+      ORDER BY m.created_at DESC
+    `;
+    const seedLikes = await sql`SELECT meme_id, likes FROM engagement WHERE meme_id LIKE 'seed-%'`;
+    const likes = new Map(seedLikes.map((row) => [String(row.meme_id), Number(row.likes)]));
     return Response.json([
-      ...result.results.filter((row) => !hiddenBrokenUploads.has(row.id)).map((row) => ({
-        id: row.id,
-        category: row.category,
-        filename: row.filename,
-        url: `/api/media/${encodeURIComponent(row.object_key)}`,
-        likes: row.likes ?? 0,
-        createdAt: row.created_at,
+      ...uploads.map((row) => ({
+        id: String(row.id),
+        category: String(row.category),
+        filename: String(row.filename),
+        url: String(row.url),
+        likes: Number(row.likes),
+        createdAt: Number(row.created_at),
         uploaded: true,
       })),
       ...seed.map((item) => ({ ...item, likes: likes.get(item.id) ?? 0, uploaded: false })),
@@ -58,55 +52,23 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const form = await request.formData();
-  const file = form.get("file");
-  const category = String(form.get("category") || "OTHER").toUpperCase();
-  if (!(file instanceof File) || file.type !== "image/gif") return new Response("GIF REQUIRED", { status: 400 });
-  if (file.size > 6 * 1024 * 1024) return new Response("GIF IS TOO LARGE", { status: 413 });
-  if (!["SLIP", "SWING", "GRAVITY", "OTHER"].includes(category)) return new Response("INVALID CATEGORY", { status: 400 });
-
-  const id = crypto.randomUUID();
-  const key = `${id}.gif`;
+  const input = await request.json() as UploadInput;
+  if (!validBlob(input)) return new Response("INVALID UPLOAD", { status: 400 });
+  const filename = input.filename!.slice(0, 120);
   const createdAt = Date.now();
-  const filename = file.name.slice(0, 120);
-  const bytes = await file.arrayBuffer();
-  const incomingHash = await digest(bytes);
-  const existing = await getDb().prepare(
-    "SELECT id, category, filename, object_key, created_at FROM memes WHERE filename = ? ORDER BY created_at DESC LIMIT 10",
-  ).bind(filename).all<Omit<UploadRow, "likes">>();
-  for (const row of existing.results) {
-    const object = await getFiles().get(row.object_key);
-    if (object && await digest(await object.arrayBuffer()) === incomingHash) {
-      return Response.json({
-        id: row.id,
-        category: row.category,
-        filename: row.filename,
-        url: `/api/media/${encodeURIComponent(row.object_key)}`,
-        likes: 0,
-        createdAt: row.created_at,
-        uploaded: true,
-      });
-    }
-  }
-  await getFiles().put(key, bytes, {
-    httpMetadata: { contentType: "image/gif", cacheControl: "public, max-age=31536000, immutable" },
-    customMetadata: { originalName: filename },
-  });
   try {
-    await getDb().prepare(
-      "INSERT INTO memes (id, category, filename, object_key, created_at) VALUES (?, ?, ?, ?, ?)",
-    ).bind(id, category, filename, key, createdAt).run();
+    await ensureSchema();
+    const sql = getDb();
+    await sql`
+      INSERT INTO memes (id, category, filename, object_key, object_url, created_at)
+      VALUES (${input.id!}, 'OTHER', ${filename}, ${input.pathname!}, ${input.url!}, ${createdAt})
+    `;
+    return Response.json({
+      id: input.id, category: "OTHER", filename, url: input.url,
+      likes: 0, createdAt, uploaded: true,
+    }, { status: 201 });
   } catch (error) {
-    await getFiles().delete(key);
+    await del(input.url!).catch(() => undefined);
     throw error;
   }
-  return Response.json({
-    id,
-    category,
-    filename,
-    url: `/api/media/${encodeURIComponent(key)}`,
-    likes: 0,
-    createdAt,
-    uploaded: true,
-  }, { status: 201 });
 }

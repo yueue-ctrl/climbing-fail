@@ -13,5 +13,6 @@ next-env.d.ts
 
 # local environment and OS files
 .env*
+!.env.example
 .DS_Store
 npm-debug.log*
