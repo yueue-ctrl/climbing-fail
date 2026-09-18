@@ -123,8 +123,8 @@ export default function Home() {
     <main>
       <header>
         <div className="brand">
-          <h1>CLIMBING FAIL</h1>
-          <p className="subtitle">YUE &amp; HER CLIMBING FRIENDS</p>
+          <h1>GRAVITY: 1, US: 0</h1>
+          <p className="subtitle">A CLIMBING FAIL MEME COLLECTION BY YUE &amp; FRIENDS</p>
         </div>
         <label className="upload">
           {uploading ? progress : "+ ADD"}
