@@ -296,9 +296,7 @@ h1 span + span { margin-top: .06em; }
   border: 0;
   z-index: 20;
   background: rgba(255,255,255,.96);
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  overflow: hidden;
 }
 .admin-panel { width: min(760px, 100%); min-height: 100%; margin: 0 auto; }
 .admin-header {
@@ -321,6 +319,26 @@ h1 span + span { margin-top: .06em; }
   background: white;
   cursor: pointer;
 }
+.admin-pagination {
+  min-height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 2px solid var(--ink);
+}
+.admin-pagination p { margin: 0; font: .66rem/1.3 var(--hand); }
+.admin-pagination div { display: flex; align-items: center; gap: 14px; }
+.admin-pagination button {
+  padding: 5px 0;
+  border: 0;
+  border-bottom: 1px solid var(--ink);
+  background: transparent;
+  font: .58rem/1.2 var(--hand);
+  cursor: pointer;
+}
+.admin-pagination button:disabled { opacity: .25; cursor: default; }
+.admin-pagination span { min-width: 54px; text-align: center; font: .6rem/1.2 var(--plain); }
 .admin-list { border-top: 2px solid var(--ink); }
 .admin-list > p { margin: 0; padding: 28px 0; font: .8rem var(--hand); }
 .admin-item {

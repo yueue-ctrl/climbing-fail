@@ -14,6 +14,7 @@ type Meme = {
   uploaded?: boolean;
 };
 type Comment = { id: number; author: string; body: string; createdAt: number };
+const ADMIN_PAGE_SIZE = 5;
 
 function shuffle<T>(items: T[]) {
   const shuffled = [...items];
@@ -46,6 +47,7 @@ export default function Home() {
   const [selected, setSelected] = useState<Meme | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [adminOpen, setAdminOpen] = useState(false);
+  const [adminPage, setAdminPage] = useState(1);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -79,6 +81,7 @@ export default function Home() {
       pressedKeys.current.add(event.key.toLowerCase());
       if (pressedKeys.current.has("z") && pressedKeys.current.has("y")) {
         event.preventDefault();
+        setAdminPage(1);
         setAdminOpen(true);
       }
       if (event.key === "Escape") setAdminOpen(false);
@@ -190,6 +193,7 @@ export default function Home() {
       });
       if (!response.ok) throw new Error(await response.text());
       setMemes((items) => items.filter((item) => item.id !== meme.id));
+      setAdminPage((page) => Math.min(page, Math.max(1, Math.ceil((memes.length - 1) / ADMIN_PAGE_SIZE))));
       setSelected((item) => item?.id === meme.id ? null : item);
     } catch (error) {
       window.alert(error instanceof Error ? error.message : "DELETE FAILED");
@@ -197,6 +201,10 @@ export default function Home() {
       setDeletingId(null);
     }
   }
+
+  const adminPageCount = Math.max(1, Math.ceil(memes.length / ADMIN_PAGE_SIZE));
+  const safeAdminPage = Math.min(adminPage, adminPageCount);
+  const adminMemes = memes.slice((safeAdminPage - 1) * ADMIN_PAGE_SIZE, safeAdminPage * ADMIN_PAGE_SIZE);
 
   return (
     <main>
@@ -297,9 +305,19 @@ export default function Home() {
               <h2>BACKSTAGE / Z+Y</h2>
               <button type="button" onClick={() => setAdminOpen(false)} aria-label="Close backstage">×</button>
             </header>
+            <nav className="admin-pagination" aria-label="Backstage pages">
+              <p>{memes.length} {memes.length === 1 ? "UPLOAD" : "UPLOADS"}</p>
+              <div>
+                <button type="button" disabled={safeAdminPage === 1}
+                  onClick={() => setAdminPage((page) => Math.max(1, page - 1))}>PREV</button>
+                <span>{safeAdminPage} / {adminPageCount}</span>
+                <button type="button" disabled={safeAdminPage === adminPageCount}
+                  onClick={() => setAdminPage((page) => Math.min(adminPageCount, page + 1))}>NEXT</button>
+              </div>
+            </nav>
             <div className="admin-list">
               {memes.length === 0 && <p>NO UPLOADS</p>}
-              {memes.map((meme) => (
+              {adminMemes.map((meme) => (
                 <article className="admin-item" key={meme.id}>
                   {/* oxlint-disable-next-line next/no-img-element */}
                   <img src={meme.url} alt="" />
