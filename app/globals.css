@@ -75,7 +75,13 @@ h1 span + span { margin-top: .06em; }
   transform: rotate(.8deg);
   text-shadow: 0 0 12px white, 0 0 12px white;
 }
-.header-actions { display: flex; align-items: center; justify-content: center; gap: 26px; }
+.header-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+}
 .upload, .reverse-all {
   flex: 0 0 auto;
   padding: 3px 2px 5px;
@@ -384,7 +390,7 @@ h1 span + span { margin-top: .06em; }
   header::before { background-position: center calc(100% - 24px); background-size: auto 78%; opacity: .28; }
   h1 { font-size: clamp(3.2rem, 18vw, 5.3rem); }
   .subtitle { margin-top: 20px; font-size: .95rem; }
-  .header-actions { gap: 20px; }
+  .header-actions { gap: 11px; }
   .upload, .reverse-all { padding: 3px 1px 4px; font-size: .72rem; }
   .gallery { margin-top: -64px; gap: 28px; padding: 0 22px 44px; }
   .gallery-column { gap: 28px; }
