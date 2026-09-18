@@ -287,8 +287,11 @@ h1 span + span { margin-top: .06em; }
   border: 0;
   z-index: 20;
   background: rgba(255,255,255,.96);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
-.admin-panel { width: min(760px, 100%); margin: 0 auto; }
+.admin-panel { width: min(760px, 100%); min-height: 100%; margin: 0 auto; }
 .admin-header {
   min-height: 0;
   padding: 0 0 18px;

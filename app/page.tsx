@@ -95,6 +95,12 @@ export default function Home() {
       window.removeEventListener("blur", clearKeys);
     };
   }, []);
+  useEffect(() => {
+    if (!adminOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [adminOpen]);
 
   function chooseFile(file: File) {
     if (previewUrl) URL.revokeObjectURL(previewUrl);
