@@ -46,6 +46,7 @@ export default function Home() {
   const [memes, setMemes] = useState<Meme[]>([]);
   const [selected, setSelected] = useState<Meme | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [shareMedia, setShareMedia] = useState<{ key: string; file: File | null } | null>(null);
   const [adminOpen, setAdminOpen] = useState(false);
   const [adminPage, setAdminPage] = useState(1);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -60,6 +61,7 @@ export default function Home() {
   const columnCount = useSyncExternalStore(subscribeToResize, getColumnCount, () => 5);
   const fileRef = useRef<HTMLInputElement>(null);
   const pressedKeys = useRef(new Set<string>());
+  const shareKey = selected ? `${selected.id}:${gravityUndone ? "reverse" : "normal"}` : "";
 
   useEffect(() => {
     let active = true;
@@ -76,6 +78,22 @@ export default function Home() {
       .then(setComments)
       .catch(() => setComments([]));
   }, [selected]);
+  useEffect(() => {
+    if (!selected) return;
+    let active = true;
+    const key = `${selected.id}:${gravityUndone ? "reverse" : "normal"}`;
+    const source = `/api/media/${encodeURIComponent(selected.id)}${gravityUndone ? "?reverse=1" : ""}`;
+    fetch(source)
+      .then(async (response) => {
+        if (!response.ok) throw new Error("MEDIA COULD NOT BE READ");
+        const blob = await response.blob();
+        const baseName = selected.filename.replace(/\.gif$/i, "");
+        return new File([blob], `${gravityUndone ? "reversed-" : ""}${baseName}.gif`, { type: "image/gif" });
+      })
+      .then((file) => { if (active) setShareMedia({ key, file }); })
+      .catch(() => { if (active) setShareMedia({ key, file: null }); });
+    return () => { active = false; };
+  }, [selected, gravityUndone]);
   useEffect(() => {
     function keyDown(event: KeyboardEvent) {
       if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
@@ -182,6 +200,24 @@ export default function Home() {
     const saved = (await response.json()) as Comment;
     setComments((items) => [...items, saved]);
     event.currentTarget.reset();
+  }
+
+  async function saveToPhotos() {
+    if (!selected) return;
+    const readyFile = shareMedia?.key === shareKey ? shareMedia.file : null;
+    if (readyFile && navigator.share) {
+      const shareData = { files: [readyFile], title: "Climbing Fail" };
+      if (!navigator.canShare || navigator.canShare(shareData)) {
+        try {
+          await navigator.share(shareData);
+          return;
+        } catch (error) {
+          if (error instanceof DOMException && error.name === "AbortError") return;
+        }
+      }
+    }
+    const source = `/api/media/${encodeURIComponent(selected.id)}${gravityUndone ? "?reverse=1" : ""}`;
+    window.open(source, "_blank", "noopener,noreferrer");
   }
 
   async function removeMeme(meme: Meme) {
@@ -295,6 +331,9 @@ export default function Home() {
             <img src={memeSource(selected)} alt="Looping climbing fail" />
             <div className="actions">
               <button onClick={like}>♥ {selected.likes}</button>
+              <button onClick={saveToPhotos} disabled={shareMedia?.key !== shareKey}>
+                {shareMedia?.key !== shareKey ? "PREPARING..." : "SAVE TO PHOTOS"}
+              </button>
               <a href={`/api/media/${encodeURIComponent(selected.id)}?download=1${gravityUndone ? "&reverse=1" : ""}`}>DOWNLOAD</a>
             </div>
             <div className="comments">
