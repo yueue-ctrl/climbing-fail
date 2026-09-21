@@ -54,10 +54,63 @@
   letter-spacing: -.035em;
   text-align: center;
 }
+.specimen[data-motion="all"] { animation: allAxes 16s ease-in-out infinite; }
+.specimen[data-motion="rowt"] { animation: rowtAxis 5s ease-in-out infinite alternate; }
+.specimen[data-motion="rong"] { animation: rongAxis 5s ease-in-out infinite alternate; }
+.specimen[data-motion="chon"] { animation: chonAxis 5s ease-in-out infinite alternate; }
+.specimen[data-motion="threshold"] { animation: thresholdAxis 6s linear infinite alternate; }
+
+@keyframes allAxes {
+  0%, 100% { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 0; }
+  16% { font-variation-settings: "ROWT" 1000, "RONG" 1000, "CHON" 0; }
+  32% { font-variation-settings: "ROWT" 0, "RONG" 0, "CHON" 500; }
+  48% { font-variation-settings: "ROWT" 1000, "RONG" 0, "CHON" 500; }
+  64% { font-variation-settings: "ROWT" 0, "RONG" 0, "CHON" 1000; }
+  80% { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 500; }
+  92% { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 1000; }
+}
+@keyframes rowtAxis {
+  from { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 0; }
+  to { font-variation-settings: "ROWT" 1000, "RONG" 1000, "CHON" 0; }
+}
+@keyframes rongAxis {
+  from { font-variation-settings: "ROWT" 0, "RONG" 0, "CHON" 0; }
+  to { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 0; }
+}
+@keyframes chonAxis {
+  from { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 0; }
+  to { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 1000; }
+}
+@keyframes thresholdAxis {
+  from { font-variation-settings: "ROWT" 250, "RONG" 1000, "CHON" 0; }
+  to { font-variation-settings: "ROWT" 450, "RONG" 1000, "CHON" 0; }
+}
+
+.motionModes {
+  margin-top: 7vh;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 22px;
+}
+.motionModes button {
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  color: #777;
+  font: .8rem/1.4 "Zebba", sans-serif;
+  cursor: pointer;
+}
+.motionModes button:hover,
+.motionModes button[data-active="true"] {
+  border-color: currentColor;
+  color: #111;
+}
 
 .controlRow {
   width: min(1080px, 100%);
-  margin-top: 9vh;
+  margin-top: 5vh;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: clamp(24px, 5vw, 74px);
@@ -113,6 +166,18 @@
   margin-top: 12px;
   border-bottom: 1px solid currentColor;
   font-size: .8rem;
+}
+.fileDefault {
+  margin: 4vh 0 0;
+  color: #777;
+  font: .7rem/1.2 "Zebba", sans-serif;
+  letter-spacing: .025em;
+}
+.motionNote {
+  margin: 10px 0 0;
+  color: #111;
+  font: .7rem/1.2 "Zebba", sans-serif;
+  letter-spacing: .025em;
 }
 
 .stylesSection {

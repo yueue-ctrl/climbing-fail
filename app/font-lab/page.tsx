@@ -6,6 +6,7 @@ import styles from "./font-lab.module.css";
 type Axes = { rowt: number; rong: number; chon: number };
 type AxisKey = keyof Axes;
 type Recipe = { name: string; use: string; text: string; axes: Axes };
+type MotionMode = "all" | "rowt" | "rong" | "chon" | "threshold" | null;
 
 const AXES: Array<{ key: AxisKey; title: string; stops: number[] }> = [
   { key: "rowt", title: "Weight", stops: [100, 500, 750, 1000] },
@@ -41,6 +42,7 @@ export default function FontLab() {
   const [specimen, setSpecimen] = useState("Something");
   const [axes, setAxes] = useState<Axes>({ rowt: 0, rong: 1000, chon: 0 });
   const [size, setSize] = useState(140);
+  const [motion, setMotion] = useState<MotionMode>("all");
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const specimenStyle = {
@@ -51,6 +53,7 @@ export default function FontLab() {
   const css = `font-variation-settings: ${variation(axes)};`;
 
   function updateAxis(key: AxisKey, value: number) {
+    setMotion(null);
     setAxes((current) => ({ ...current, [key]: value }));
   }
 
@@ -77,9 +80,19 @@ export default function FontLab() {
           value={specimen}
           onChange={(event) => setSpecimen(event.target.value)}
           style={specimenStyle}
+          data-motion={motion ?? undefined}
           rows={1}
           spellCheck={false}
         />
+
+        <div className={styles.motionModes}>
+          {(["all", "rowt", "rong", "chon", "threshold"] as const).map((mode) => (
+            <button key={mode} data-active={motion === mode || undefined} onClick={() => setMotion(mode)}>
+              {mode === "threshold" ? "350 TEST" : mode.toUpperCase()}
+            </button>
+          ))}
+          <button data-active={!motion || undefined} onClick={() => setMotion(null)}>PAUSE</button>
+        </div>
 
         <div className={styles.controlRow}>
           {AXES.map((axis) => (
@@ -104,8 +117,8 @@ export default function FontLab() {
               min="36"
               max="260"
               value={size}
-              onInput={(event) => setSize(Number(event.currentTarget.value))}
-              onChange={(event) => setSize(Number(event.target.value))}
+              onInput={(event) => { setMotion(null); setSize(Number(event.currentTarget.value)); }}
+              onChange={(event) => { setMotion(null); setSize(Number(event.target.value)); }}
             />
           </label>
         </div>
@@ -114,6 +127,8 @@ export default function FontLab() {
           <code>{css}</code>
           <span>{copyState === "copied" ? "COPIED" : copyState === "failed" ? "COPY FAILED" : "COPY"}</span>
         </button>
+        <p className={styles.fileDefault}>FVAR DEFAULT ROWT 350 · 350 TEST SWEEPS ROWT 250–450</p>
+        {motion && <p className={styles.motionNote}>MOTION PREVIEW · PAUSE TO SET AND COPY A STATIC VALUE</p>}
       </section>
 
       <section className={styles.recipesSection}>
@@ -127,7 +142,7 @@ export default function FontLab() {
               <div className={styles.recipeMeta}>
                 <div><h3>{recipe.name}</h3><p>{recipe.use}</p></div>
                 <code>{variation(recipe.axes)}</code>
-                <button onClick={() => setAxes(recipe.axes)}>USE</button>
+                <button onClick={() => { setMotion(null); setAxes(recipe.axes); }}>USE</button>
                 <button onClick={() => {
                   void navigator.clipboard.writeText(`font-variation-settings: ${variation(recipe.axes)};`);
                 }}>COPY</button>
@@ -150,7 +165,7 @@ export default function FontLab() {
                   return (
                     <button
                       key={stop}
-                      onClick={() => setAxes(sampleAxes)}
+                      onClick={() => { setMotion(null); setAxes(sampleAxes); }}
                       style={{ fontVariationSettings: variation(sampleAxes) }}
                     >
                       Zebba {stop}
