@@ -1,334 +1,223 @@
 .lab {
   min-height: 100vh;
-  padding: 28px;
+  overflow-x: hidden;
   color: #111;
-  background: #f5f3ed;
-  font-family: Arial, Helvetica, sans-serif;
-  font-variation-settings: normal;
+  background: #fff;
+  font-family: "Zebba", sans-serif;
+  font-variation-settings: "ROWT" 350, "RONG" 0, "CHON" 0;
 }
 
-.intro {
-  min-height: 68vh;
-  padding: 4vw 1vw 7vw;
+.hero {
+  min-height: 100svh;
+  padding: 5vh 5vw 4vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border: 2px solid #111;
+  text-align: center;
 }
 
-.eyebrow,
-.sectionHeading > p:first-child {
+.micro {
   margin: 0;
-  font: 700 .72rem/1 Arial, sans-serif;
-  letter-spacing: .13em;
+  font: 1rem/1 "Zebba", sans-serif;
+  letter-spacing: .02em;
 }
 
-.intro h1 {
-  margin: auto 0;
-  padding: .18em 0;
-  color: #111;
-  font: clamp(4.2rem, 11vw, 11rem)/.75 "Zebba", sans-serif;
-  font-variation-settings: "ROWT" 350, "RONG" 0, "CHON" 1000 !important;
-  letter-spacing: -.045em;
-  text-shadow: none;
+.heroLine {
+  width: 100%;
+  font: clamp(4rem, 9.5vw, 11.5rem)/.92 "Zebba", sans-serif;
+  letter-spacing: -.035em;
 }
 
-.lede {
-  width: min(680px, 100%);
-  margin: 0 0 0 auto;
-  font: 1rem/1.35 Arial, sans-serif;
-}
-
-.workbench {
-  margin-top: 28px;
-  display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(300px, .65fr);
-  border: 2px solid #111;
-}
-
-.specimenPanel {
-  min-width: 0;
-  min-height: 720px;
-  padding: 24px;
-  border-right: 2px solid #111;
+.playground {
+  min-height: 100svh;
+  padding: 10vh 5vw 7vh;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.fieldLabel {
-  margin-bottom: 8px;
-  font: 700 .7rem/1 Arial, sans-serif;
-  letter-spacing: .1em;
-}
-
-.specimenInput {
+.specimen {
   width: 100%;
-  min-height: 80px;
-  padding: 8px 0;
+  min-height: 1.2em;
+  max-height: 2.5em;
+  margin: 0;
+  padding: .08em 0;
   border: 0;
-  border-bottom: 1px solid #111;
-  border-radius: 0;
   outline: 0;
-  resize: vertical;
-  background: transparent;
-  font: 1rem/1.25 Arial, sans-serif;
-}
-
-.liveSpecimen {
-  flex: 1;
-  min-height: 420px;
-  padding: 48px 0;
-  display: flex;
-  align-items: center;
-  overflow-wrap: anywhere;
-  line-height: .88;
-  letter-spacing: -.03em;
-  transition: font-variation-settings 80ms linear, font-size 80ms linear;
-}
-
-.readout {
-  padding-top: 16px;
-  border-top: 1px solid #111;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 22px;
-  font: 700 .72rem/1 Arial, sans-serif;
-  letter-spacing: .06em;
-}
-
-.controls {
-  padding: 24px;
-}
-
-.axisControl {
-  padding: 0 0 25px;
-  margin-bottom: 25px;
-  border-bottom: 1px solid #111;
-}
-
-.axisHeading {
-  margin-bottom: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  font: 700 .72rem/1 Arial, sans-serif;
-  letter-spacing: .07em;
-}
-
-.axisHeading input {
-  width: 78px;
-  padding: 5px 7px;
-  border: 1px solid #111;
-  border-radius: 0;
-  background: transparent;
-  font: 700 .72rem/1 Arial, sans-serif;
-  text-align: right;
-}
-
-.range {
-  width: 100%;
-  accent-color: #111;
-}
-
-.scale {
-  margin-top: 5px;
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  color: #555;
-  font: .58rem/1.2 Arial, sans-serif;
-}
-
-.copyMain,
-.presetActions button {
-  padding: 11px 13px;
-  border: 1px solid #111;
-  border-radius: 0;
-  background: #111;
-  color: white;
-  font: 700 .72rem/1 Arial, sans-serif;
-  letter-spacing: .06em;
-  cursor: pointer;
-}
-
-.copyMain { width: 100%; }
-
-.copyMain:hover,
-.presetActions button:hover {
-  background: transparent;
-  color: #111;
-}
-
-.code {
-  margin: 14px 0 0;
-  padding: 14px;
-  overflow-x: auto;
-  background: white;
-  font: .68rem/1.55 ui-monospace, SFMono-Regular, Menlo, monospace;
-  white-space: pre-wrap;
-}
-
-.notes {
-  margin-top: 28px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  border: 2px solid #111;
-}
-
-.notes > div {
-  min-height: 170px;
-  padding: 22px;
-  font: .86rem/1.55 Arial, sans-serif;
-}
-
-.notes > div + div { border-left: 1px solid #111; }
-
-.section {
-  margin-top: 28px;
-  padding: 28px 0 0;
-  border-top: 2px solid #111;
-}
-
-.sectionHeading {
-  display: grid;
-  grid-template-columns: 150px minmax(0, 1fr);
-  align-items: start;
-  gap: 12px;
-  margin-bottom: 26px;
-}
-
-.sectionHeading h2 {
-  margin: -.08em 0 0;
-  font: clamp(2.6rem, 6vw, 6rem)/.8 "Zebba", sans-serif;
-  font-variation-settings: "ROWT" 350, "RONG" 0, "CHON" 500 !important;
-  letter-spacing: -.025em;
-}
-
-.sectionCopy {
-  grid-column: 2;
-  width: min(720px, 100%);
-  margin: 8px 0 0;
-  font: .9rem/1.4 Arial, sans-serif;
-}
-
-.presetGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-top: 1px solid #111;
-  border-left: 1px solid #111;
-}
-
-.preset {
-  min-width: 0;
-  min-height: 360px;
-  padding: 18px;
-  border-right: 1px solid #111;
-  border-bottom: 1px solid #111;
-  display: flex;
-  flex-direction: column;
-}
-
-.presetSpecimen {
-  min-height: 150px;
-  display: flex;
-  align-items: center;
-  overflow-wrap: anywhere;
-  font: 3.5rem/.88 "Zebba", sans-serif;
-}
-
-.preset h3 {
-  margin: 20px 0 5px;
-  font: 700 .75rem/1 Arial, sans-serif;
-  letter-spacing: .06em;
-}
-
-.preset p {
-  min-height: 34px;
-  margin: 0 0 14px;
-  font: .75rem/1.35 Arial, sans-serif;
-}
-
-.preset code {
-  display: block;
-  margin-top: auto;
-  overflow-wrap: anywhere;
-  font: .66rem/1.35 ui-monospace, SFMono-Regular, Menlo, monospace;
-}
-
-.presetActions {
-  margin-top: 15px;
-  display: flex;
-  gap: 8px;
-}
-
-.presetActions button { flex: 1; }
-
-.atlas {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-top: 1px solid #111;
-  border-left: 1px solid #111;
-}
-
-.atlasCard {
-  min-width: 0;
-  min-height: 230px;
-  padding: 17px;
-  border: 0;
-  border-right: 1px solid #111;
-  border-bottom: 1px solid #111;
-  border-radius: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  resize: none;
   overflow: hidden;
   background: transparent;
   color: #111;
+  font-family: "Zebba", sans-serif;
+  line-height: .9;
+  letter-spacing: -.035em;
+  text-align: center;
+}
+
+.controlRow {
+  width: min(1080px, 100%);
+  margin-top: 9vh;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(24px, 5vw, 74px);
+}
+
+.control {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px;
+  font-size: .9rem;
+}
+
+.control output { text-align: right; }
+.control input {
+  grid-column: 1 / -1;
+  width: 100%;
+  height: 18px;
+  margin: 5px 0 0;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+.control input::-webkit-slider-runnable-track { height: 3px; background: #111; }
+.control input::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  margin-top: -7.5px;
+  appearance: none;
+  border-radius: 50%;
+  background: #111;
+}
+.control input::-moz-range-track { height: 3px; background: #111; }
+.control input::-moz-range-thumb { width: 18px; height: 18px; border: 0; border-radius: 50%; background: #111; }
+
+.copy {
+  max-width: 100%;
+  margin-top: 7vh;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #111;
+  cursor: pointer;
+  text-align: center;
+}
+.copy code {
+  display: block;
+  font: .8rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  overflow-wrap: anywhere;
+}
+.copy span {
+  display: inline-block;
+  margin-top: 12px;
+  border-bottom: 1px solid currentColor;
+  font-size: .8rem;
+}
+
+.stylesSection {
+  min-height: 100svh;
+  padding: 15vh 7vw;
+}
+.stylesSection h2,
+.sizes h2,
+.glyphSection h2 {
+  margin: 0;
+  font: clamp(2.3rem, 4vw, 4.5rem)/1 "Zebba", sans-serif;
+  font-variation-settings: "ROWT" 350, "RONG" 0, "CHON" 0 !important;
+  text-align: center;
+}
+.axisColumns {
+  margin-top: 17vh;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9vw;
+}
+.axisColumn h3 { margin: 0; font: 2rem/1 "Zebba", sans-serif; }
+.axisColumn > p { margin: 8px 0 55px; color: #777; font-size: .85rem; }
+.axisSamples {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+.axisSamples button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #111;
+  font: 2rem/1 "Zebba", sans-serif;
   text-align: left;
   cursor: pointer;
 }
+.axisSamples button:hover::after { content: " ●"; color: #d977f2; }
 
-.atlasCard:hover { background: #111; color: #f5f3ed; }
-
-.atlasText {
-  display: block;
-  overflow-wrap: anywhere;
+.sizes {
+  min-height: 100svh;
+  padding: 12vh 6vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.sizeLine {
+  position: relative;
+  padding-right: 70px;
   font-family: "Zebba", sans-serif;
-  line-height: .86;
-  letter-spacing: -.02em;
+  line-height: .9;
+  overflow-wrap: anywhere;
+}
+.sizeLine small {
+  position: absolute;
+  right: 0;
+  bottom: .15em;
+  font: .75rem/1 "Zebba", sans-serif;
 }
 
-.atlasValues {
-  display: block;
-  margin-top: 20px;
-  font: 700 .65rem/1 Arial, sans-serif;
-  letter-spacing: .05em;
+.glyphSection { min-height: 100svh; padding: 10vh 5vw 13vh; }
+.glyphRow {
+  max-width: 1720px;
+  margin: 8vh auto 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  font-family: "Zebba", sans-serif;
 }
+.glyphRow span {
+  width: clamp(54px, 5.2vw, 95px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: #f3f3f3;
+  font-size: clamp(2rem, 3vw, 3.8rem);
+}
+.numberTitle { margin-top: 12vh !important; }
 
 .footer {
-  padding: 90px 0 12px;
-  font: 700 .66rem/1 Arial, sans-serif;
-  letter-spacing: .08em;
+  min-height: 28vh;
+  padding: 7vh 7vw;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+  font-size: .9rem;
 }
 
-@media (max-width: 850px) {
-  .lab { padding: 14px; }
-  .intro { min-height: 58vh; }
-  .workbench { grid-template-columns: 1fr; }
-  .specimenPanel { min-height: 540px; border-right: 0; border-bottom: 2px solid #111; }
-  .liveSpecimen { min-height: 300px; }
-  .notes { grid-template-columns: 1fr; }
-  .notes > div { min-height: 0; }
-  .notes > div + div { border-left: 0; border-top: 1px solid #111; }
-  .presetGrid, .atlas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
-@media (max-width: 520px) {
-  .intro { padding: 24px 14px; }
-  .intro h1 { font-size: 4.2rem; }
-  .sectionHeading { grid-template-columns: 1fr; }
-  .sectionCopy { grid-column: 1; }
-  .presetGrid, .atlas { grid-template-columns: 1fr; }
-  .specimenPanel, .controls { padding: 16px; }
+@media (max-width: 760px) {
+  .hero { min-height: 82svh; }
+  .heroLine { font-size: clamp(3.4rem, 17vw, 6rem); }
+  .playground { min-height: 90svh; padding-inline: 18px; }
+  .specimen { font-size: min(var(--specimen-size, 100px), 25vw) !important; }
+  .controlRow { grid-template-columns: 1fr 1fr; gap: 30px 24px; }
+  .copy code { font-size: .62rem; }
+  .stylesSection { padding: 12vh 24px; }
+  .axisColumns { margin-top: 10vh; grid-template-columns: 1fr; gap: 80px; }
+  .axisColumn { text-align: center; }
+  .axisColumn > p { margin-bottom: 28px; }
+  .axisSamples { align-items: center; }
+  .sizes { min-height: 80svh; padding-inline: 22px; }
+  .glyphSection { padding-inline: 15px; }
+  .footer { flex-direction: column; align-items: flex-start; justify-content: flex-end; }
 }
