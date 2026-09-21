@@ -135,6 +135,40 @@ h1 span + span { margin-top: .06em; }
 .gallery-column:nth-child(5n+3) .tile { transform: translateX(-2px) rotate(-.45deg); }
 .gallery-column:nth-child(5n+4) .tile { transform: translateY(-2px) rotate(1deg); }
 .gallery-column:nth-child(5n) .tile { transform: translateX(2px) rotate(-.7deg); }
+.gallery.scattered {
+  display: block;
+  min-height: var(--scatter-height);
+  overflow: hidden;
+  cursor: crosshair;
+}
+.arrange-trigger {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: transparent;
+  cursor: crosshair;
+}
+.gallery.scattered .gallery-column { display: contents; }
+.gallery.scattered .tile {
+  position: absolute;
+  top: var(--scatter-y);
+  left: var(--scatter-x);
+  width: clamp(132px, 15vw, 220px);
+  transform: translateX(-50%) rotate(var(--scatter-r)) scale(var(--scatter-scale));
+  transform-origin: center;
+  animation: scatter-in .55s cubic-bezier(.2,.8,.2,1) both;
+}
+.gallery.scattered .tile:hover { z-index: 2; transform: translateX(-50%) rotate(0deg) scale(1.03); }
+.gallery.organized .tile { animation: settle-in .48s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes scatter-in {
+  from { opacity: .25; transform: translateX(-50%) rotate(0deg) scale(.76); }
+}
+@keyframes settle-in {
+  from { opacity: .4; transform: translateY(12px) rotate(0deg) scale(.92); }
+}
 .tile img {
   display: block;
   width: 100%;
@@ -407,6 +441,9 @@ h1 span + span { margin-top: .06em; }
   .upload, .reverse-all { padding: 3px 1px 4px; font-size: .72rem; }
   .gallery { margin-top: -64px; gap: 28px; padding: 0 22px 44px; }
   .gallery-column { gap: 28px; }
+  .gallery.scattered { min-height: var(--scatter-height); padding-inline: 12px; }
+  .gallery.scattered .tile { left: var(--scatter-x-mobile); width: clamp(118px, 41vw, 170px); transform: rotate(var(--scatter-r)) scale(var(--scatter-scale)); }
+  .gallery.scattered .tile:hover { transform: rotate(0deg) scale(1.02); }
   .site-footer { padding: 13px 14px 15px; }
   .community-note { font-size: .62rem; }
   .font-credit { font-size: .48rem; }
