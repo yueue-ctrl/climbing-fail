@@ -143,6 +143,27 @@ export default function FontLab() {
           <p>OUTLINE AXIS TESTS</p>
         </article>
 
+        <article className={styles.blackImpact}>
+          <div><span>GRAVITY</span><span>LEFT</span></div>
+          <p>FULL WEIGHT IMPACT</p>
+        </article>
+
+        <article className={styles.collisionTest}>
+          <div><span>FALL</span><span>RISE</span></div>
+          <p>AXIS COLLISION</p>
+        </article>
+
+        <article className={styles.typeWall}>
+          <div>
+            <span>NO GRAVITY NO GRAVITY</span>
+            <span>CLIMB FALL CLIMB FALL</span>
+            <span>UP DOWN UP DOWN</span>
+            <span>FEET FIRST FEET FIRST</span>
+            <span>FALL AGAIN FALL AGAIN</span>
+          </div>
+          <p>VARIABLE TYPE WALL</p>
+        </article>
+
         <article className={styles.differenceTest}>
           <div aria-label="UP DOWN">
             <span>UP</span>
