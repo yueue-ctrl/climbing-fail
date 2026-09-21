@@ -168,7 +168,7 @@ export default function FontLab() {
         </article>
 
         <article className={styles.tightTracking}>
-          <div>HOLDONTIGHT</div>
+          <AsyncSameAxisWord text="HOLDONTIGHT" />
           <p>TIGHT LETTER SPACING</p>
         </article>
 
@@ -226,5 +226,24 @@ function AxisWord({ text, layer = 0, className = "" }: { text: string; layer?: n
         );
       })}
     </span>
+  );
+}
+
+function AsyncSameAxisWord({ text }: { text: string }) {
+  return (
+    <div className={styles.sameAxisWord} aria-label={text}>
+      {Array.from(text).map((letter, index) => (
+        <span
+          aria-hidden="true"
+          key={`${letter}-${index}`}
+          style={{
+            "--axis-delay": `${-index * 0.47}s`,
+            "--axis-duration": `${3.2 + (index % 5) * 0.38}s`,
+          } as CSSProperties}
+        >
+          {letter}
+        </span>
+      ))}
+    </div>
   );
 }

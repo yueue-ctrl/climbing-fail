@@ -201,7 +201,8 @@
 .differenceTest span:last-child { right: 1vw; top: 14vw; color: #000; animation: combo4 6s ease-in-out infinite alternate-reverse; }
 
 .tightLeading > div { display: flex; flex-direction: column; align-items: center; font-size: clamp(7rem, 19vw, 22rem); line-height: .5; letter-spacing: -.06em; animation: combo4 6s ease-in-out infinite alternate; }
-.tightTracking > div { white-space: nowrap; font-size: clamp(5rem, 15vw, 17rem); line-height: .72; letter-spacing: -.19em; text-align: center; animation: combo5 6s ease-in-out infinite alternate; }
+.tightTracking > .sameAxisWord { display: flex; justify-content: center; white-space: nowrap; font-size: clamp(5rem, 15vw, 17rem); line-height: .72; letter-spacing: -.19em; text-align: center; }
+.sameAxisWord span { display: inline-block; animation: combo5 var(--axis-duration, 4s) ease-in-out var(--axis-delay, 0s) infinite alternate; will-change: font-variation-settings; }
 .verticalTest > .axisWord { min-height: 65vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .verticalTest .axisLetter { display: block; margin-bottom: .06em; font-size: clamp(4rem, 8vw, 9rem); line-height: .84; letter-spacing: 0; }
 .glyphSection { min-height: 100svh; }
