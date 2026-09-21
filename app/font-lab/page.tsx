@@ -177,10 +177,6 @@ export default function FontLab() {
           <p>VERTICAL TYPE</p>
         </article>
 
-        <article className={styles.mixedTest}>
-          <div><span>UP</span><span>DOWN</span><span>SIDEWAYS</span><span>AGAIN</span></div>
-          <p>FIVE AXIS COMBINATIONS</p>
-        </article>
       </section>
 
       <section className={styles.mediaShowcase} aria-label="Roboto Mono Zebba videos">

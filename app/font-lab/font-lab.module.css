@@ -204,13 +204,6 @@
 .tightTracking > div { white-space: nowrap; font-size: clamp(5rem, 15vw, 17rem); line-height: .72; letter-spacing: -.19em; text-align: center; animation: combo5 6s ease-in-out infinite alternate; }
 .verticalTest > .axisWord { min-height: 65vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .verticalTest .axisLetter { display: block; margin-bottom: .06em; font-size: clamp(4rem, 8vw, 9rem); line-height: .84; letter-spacing: 0; }
-.mixedTest > div { min-height: 65vh; display: grid; grid-template-columns: 1fr 1fr; place-items: center; gap: 2vw; }
-.mixedTest span { font-size: clamp(4rem, 10vw, 12rem); line-height: .68; }
-.mixedTest span:nth-child(1) { animation: combo1 4.2s ease-in-out infinite alternate; }
-.mixedTest span:nth-child(2) { animation: combo2 5s ease-in-out infinite alternate; }
-.mixedTest span:nth-child(3) { animation: combo3 5.5s ease-in-out infinite alternate; }
-.mixedTest span:nth-child(4) { animation: combo5 4.8s ease-in-out infinite alternate-reverse; }
-
 .glyphSection { min-height: 100svh; }
 .glyphRow { max-width: 1720px; margin: 8vh auto 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; font-variation-settings: "ROWT" 350, "RONG" 1000, "CHON" 0; }
 .glyphRow span { width: clamp(54px, 5.2vw, 95px); aspect-ratio: 1; display: grid; place-items: center; border-radius: 13px; background: #f3f3f3; font-size: clamp(2rem, 3vw, 3.8rem); cursor: crosshair; }
@@ -246,7 +239,6 @@
   .differenceTest span { width: 78vw; }
   .differenceTest span:first-child { left: 0; }
   .differenceTest span:last-child { right: 0; }
-  .mixedTest > div { grid-template-columns: 1fr; min-height: 55vh; }
   .glyphSection { padding-inline: 15px; }
   .mediaShowcase { padding-inline: 20px; gap: 7vh; }
   .mediaShowcase video, .mediaShowcase img { width: min(420px, 86vw); }
