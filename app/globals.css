@@ -13,9 +13,9 @@
   --ink: #151515;
   --hand: "Zebba", sans-serif;
   --plain: "Zebba", sans-serif;
-  --font-rest: "ROWT" 350, "RONG" 0, "CHON" 0;
-  --font-title: "ROWT" 1000, "RONG" 1000, "CHON" 1000;
-  --font-squashed: "ROWT" 1000, "RONG" 1000, "CHON" 1000;
+  --font-rest: "ROWT" 350, "RONG" 1000, "CHON" 0;
+  --font-title: "ROWT" 0, "RONG" 1000, "CHON" 0;
+  --font-squashed: "ROWT" 1000, "RONG" 1000, "CHON" 0;
 }
 
 * { box-sizing: border-box; }
@@ -74,9 +74,23 @@ h1 {
   letter-spacing: -.055em;
   color: var(--ink);
   text-shadow: 0 0 18px white, 0 0 18px white;
+  font-variation-settings: var(--font-title);
+  animation: title-scheme-one 4.6s cubic-bezier(.45,0,.55,1) infinite alternate;
 }
 h1 span { display: block; white-space: nowrap; }
 h1 span + span { margin-top: .06em; }
+.async-variable-text { display: inline; }
+.async-letter {
+  display: inline-block;
+  font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 0;
+  animation: title-scheme-one var(--letter-duration, 4s) cubic-bezier(.45,0,.55,1) var(--letter-delay, 0s) infinite alternate;
+  will-change: font-variation-settings;
+}
+.async-space { width: .33em; }
+@keyframes title-scheme-one {
+  from { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 0; }
+  to { font-variation-settings: "ROWT" 1000, "RONG" 1000, "CHON" 0; }
+}
 .subtitle {
   margin: 27px 0 0;
   color: var(--ink);
@@ -422,9 +436,17 @@ h1 span + span { margin-top: .06em; }
   color: var(--ink);
   font: .52rem/1.4 var(--plain);
 }
+.footer-contact {
+  margin: 2px 0 0;
+  color: var(--ink);
+  font: .52rem/1.4 var(--plain);
+  text-align: right;
+}
+.font-credit { text-align: right; }
+.footer-contact a { color: inherit; text-decoration: none; }
+.footer-contact a:hover { text-decoration: underline; }
 
-/* The title stays on its inflated instance; small text is animated in JavaScript. */
-h1, h2 { font-variation-settings: var(--font-title) !important; }
+h2 { font-variation-settings: var(--font-title); }
 
 @media (max-width: 600px) {
   header { min-height: 100svh; padding: 45px 14px 38px; gap: 24px; }
@@ -438,6 +460,7 @@ h1, h2 { font-variation-settings: var(--font-title) !important; }
   .site-footer { padding: 13px 14px 15px; }
   .community-note { font-size: .62rem; }
   .font-credit { font-size: .48rem; }
+  .footer-contact { font-size: .48rem; }
   .comments form { grid-template-columns: 72px 1fr; }
   .comments form button { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--ink); }
   .meme-editor { padding: 14px; }
