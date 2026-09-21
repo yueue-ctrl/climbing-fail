@@ -5,51 +5,33 @@ import styles from "./font-lab.module.css";
 
 type Axes = { rowt: number; rong: number; chon: number };
 type AxisKey = keyof Axes;
-type Recipe = { name: string; use: string; text: string; axes: Axes };
-type MotionMode = "all" | "rowt" | "rong" | "chon" | "threshold" | null;
+type MotionMode = "combo1" | "combo2" | "combo3" | "combo4" | "combo5" | null;
+type Recipe = { name: string; text: string; motion: string; effect: MotionMode; axes: Axes };
 
-const AXES: Array<{ key: AxisKey; title: string; stops: number[] }> = [
-  { key: "rowt", title: "Weight", stops: [100, 500, 750, 1000] },
-  { key: "rong", title: "Ronghua", stops: [250, 500, 750, 1000] },
-  { key: "chon", title: "Inflation", stops: [250, 500, 750, 1000] },
-];
-
+const AXIS_KEYS: AxisKey[] = ["rowt", "rong", "chon"];
 const UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const LOWERCASE = "abcdefghijklmnopqrstuvwxyz".split("");
 const NUMBERS = "0123456789".split("");
 
 const RECIPES: Recipe[] = [
-  { name: "Default", use: "RONG", text: "Zebba", axes: { rowt: 0, rong: 1000, chon: 0 } },
-  { name: "CHON 500", use: "Half inflation", text: "Afterglow", axes: { rowt: 0, rong: 0, chon: 500 } },
-  { name: "CHON 1000", use: "Full inflation", text: "Squirrels", axes: { rowt: 0, rong: 0, chon: 1000 } },
-  { name: "RONG + CHON 500", use: "Ronghua with half inflation", text: "Something", axes: { rowt: 0, rong: 1000, chon: 500 } },
-  { name: "RONG + CHON 1000", use: "Ronghua with full inflation", text: "LOUD", axes: { rowt: 0, rong: 1000, chon: 1000 } },
+  { name: "ONE", text: "GRAVITY HAS LEFT THE CHAT", motion: "ROWT 0 TO 1000   RONG 1000   CHON 0", effect: "combo1", axes: { rowt: 1000, rong: 1000, chon: 0 } },
+  { name: "TWO", text: "I MEANT TO DO THAT", motion: "ROWT 0   RONG 999   CHON 0 TO 1000", effect: "combo2", axes: { rowt: 0, rong: 999, chon: 1000 } },
+  { name: "THREE", text: "PERFECT LANDING EVERY TIME", motion: "ROWT 0 TO 1000   RONG 1000   CHON 1000", effect: "combo3", axes: { rowt: 1000, rong: 1000, chon: 1000 } },
+  { name: "FOUR", text: "MY FEET HAVE OTHER PLANS", motion: "ROWT 1000   RONG 1000   CHON 0 TO 1000", effect: "combo4", axes: { rowt: 1000, rong: 1000, chon: 1000 } },
+  { name: "FIVE", text: "CLIMB HIGH FALL WITH STYLE", motion: "ROWT 1000   RONG 350 TO 999   CHON 0", effect: "combo5", axes: { rowt: 1000, rong: 999, chon: 0 } },
 ];
 
 function variation(axes: Axes) {
   return `"ROWT" ${axes.rowt}, "RONG" ${axes.rong}, "CHON" ${axes.chon}`;
 }
 
-function isolatedAxis(key: AxisKey, value: number): Axes {
-  return {
-    rowt: key === "rowt" ? value : 0,
-    rong: key === "rong" ? value : 0,
-    chon: key === "chon" ? value : 0,
-  };
-}
-
 export default function FontLab() {
-  const [specimen, setSpecimen] = useState("Something");
+  const [specimen, setSpecimen] = useState("Roboto Mono\nZebba");
   const [axes, setAxes] = useState<Axes>({ rowt: 0, rong: 1000, chon: 0 });
-  const [size, setSize] = useState(140);
-  const [motion, setMotion] = useState<MotionMode>("all");
+  const [motion, setMotion] = useState<MotionMode>("combo1");
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
-  const specimenStyle = {
-    fontVariationSettings: variation(axes),
-    fontSize: `${size}px`,
-    "--specimen-size": `${size}px`,
-  } as CSSProperties;
+  const specimenStyle = { fontVariationSettings: variation(axes) } as CSSProperties;
   const css = `font-variation-settings: ${variation(axes)};`;
 
   function updateAxis(key: AxisKey, value: number) {
@@ -57,174 +39,175 @@ export default function FontLab() {
     setAxes((current) => ({ ...current, [key]: value }));
   }
 
-  function copyCss() {
+  function applyRecipe(recipe: Recipe) {
+    setMotion(null);
+    setAxes(recipe.axes);
+    setSpecimen(recipe.text);
+  }
+
+  function copyCss(value = css) {
     setCopyState("copied");
-    void navigator.clipboard.writeText(css).catch(() => setCopyState("failed"));
+    void navigator.clipboard.writeText(value).catch(() => setCopyState("failed"));
     window.setTimeout(() => setCopyState("idle"), 1400);
   }
 
   return (
-    <main className={styles.lab}>
+    <main className={styles.lab} data-font-lab>
       <section className={styles.hero}>
-        <p className={styles.micro}>Zebba variable typeface</p>
-        <div className={styles.heroLine} style={{ fontVariationSettings: variation(axes) }}>
-          It&apos;s a feature, not a bug
-        </div>
-        <p className={styles.micro}>Default · ROWT 0 / RONG 1000 / CHON 0</p>
+        <p className={styles.micro}>ROBOTO MONO ZEBBA VARIABLE TYPEFACE</p>
+        <div className={styles.heroLine}><span>ROBOTO MONO</span><span>ZEBBA</span></div>
+        <p className={styles.micro}>DISPLAY TYPE FOR TITLES</p>
       </section>
 
       <section className={styles.playground}>
         <textarea
+          id="font-lab-specimen"
           className={styles.specimen}
           aria-label="Specimen text"
           value={specimen}
           onChange={(event) => setSpecimen(event.target.value)}
           style={specimenStyle}
-          data-motion={motion ?? undefined}
-          rows={1}
+          rows={2}
           spellCheck={false}
         />
 
-        <div className={styles.motionModes}>
-          {(["all", "rowt", "rong", "chon", "threshold"] as const).map((mode) => (
-            <button key={mode} data-active={motion === mode || undefined} onClick={() => setMotion(mode)}>
-              {mode === "threshold" ? "350 TEST" : mode.toUpperCase()}
-            </button>
+        <div className={styles.motionModes} aria-label="Animation modes">
+          {RECIPES.map((recipe, index) => (
+            <span key={recipe.name}>
+              <input
+                className={`${styles.modeInput} ${styles[`modeCombo${index + 1}`]}`}
+                id={`mode-combo-${index + 1}`}
+                type="radio"
+                name="motion"
+                checked={motion === recipe.effect}
+                onChange={() => setMotion(recipe.effect)}
+              />
+              <label htmlFor={`mode-combo-${index + 1}`}>{recipe.name}</label>
+            </span>
           ))}
-          <button data-active={!motion || undefined} onClick={() => setMotion(null)}>PAUSE</button>
+          <span>
+            <input className={`${styles.modeInput} ${styles.modePause}`} id="mode-pause" type="radio" name="motion" checked={motion === null} onChange={() => setMotion(null)} />
+            <label htmlFor="mode-pause">PAUSE</label>
+          </span>
         </div>
 
         <div className={styles.controlRow}>
-          {AXES.map((axis) => (
-            <label className={styles.control} key={axis.key}>
-              <span>{axis.key.toUpperCase()}</span>
-              <output>{axes[axis.key]}</output>
+          {AXIS_KEYS.map((key) => (
+            <label className={styles.control} key={key}>
+              <span>{key.toUpperCase()}</span>
+              <output data-axis-output={key}>{axes[key]}</output>
               <input
+                data-axis={key}
                 type="range"
                 min="0"
                 max="1000"
-                value={axes[axis.key]}
-                onInput={(event) => updateAxis(axis.key, Number(event.currentTarget.value))}
-                onChange={(event) => updateAxis(axis.key, Number(event.target.value))}
+                value={axes[key]}
+                onInput={(event) => updateAxis(key, Number(event.currentTarget.value))}
+                onChange={(event) => updateAxis(key, Number(event.target.value))}
               />
             </label>
           ))}
-          <label className={styles.control}>
-            <span>SIZE</span>
-            <output>{size}</output>
-            <input
-              type="range"
-              min="36"
-              max="260"
-              value={size}
-              onInput={(event) => { setMotion(null); setSize(Number(event.currentTarget.value)); }}
-              onChange={(event) => { setMotion(null); setSize(Number(event.target.value)); }}
-            />
-          </label>
         </div>
 
-        <button className={styles.copy} onClick={copyCss}>
+        <button type="button" className={styles.copy} onClick={() => copyCss()}>
           <code>{css}</code>
           <span>{copyState === "copied" ? "COPIED" : copyState === "failed" ? "COPY FAILED" : "COPY"}</span>
         </button>
-        <p className={styles.fileDefault}>FVAR DEFAULT ROWT 350 · 350 TEST SWEEPS ROWT 250–450</p>
-        {motion && <p className={styles.motionNote}>MOTION PREVIEW · PAUSE TO SET AND COPY A STATIC VALUE</p>}
       </section>
 
       <section className={styles.recipesSection}>
-        <h2>Combinations</h2>
+        <h2>COMBINATIONS</h2>
         <div className={styles.recipes}>
           {RECIPES.map((recipe) => (
-            <article className={styles.recipe} key={recipe.name}>
-              <div className={styles.recipeWord} style={{ fontVariationSettings: variation(recipe.axes) }}>
-                {recipe.text}
-              </div>
+            <article className={styles.recipe} data-effect={recipe.effect} key={recipe.name}>
+              <div className={styles.recipeWord}>{recipe.text}</div>
               <div className={styles.recipeMeta}>
-                <div><h3>{recipe.name}</h3><p>{recipe.use}</p></div>
-                <code>{variation(recipe.axes)}</code>
-                <button onClick={() => { setMotion(null); setAxes(recipe.axes); }}>USE</button>
-                <button onClick={() => {
-                  void navigator.clipboard.writeText(`font-variation-settings: ${variation(recipe.axes)};`);
-                }}>COPY</button>
+                <div><h3>{recipe.name}</h3><p>{recipe.motion}</p></div>
+                <button type="button" onClick={() => applyRecipe(recipe)}>USE</button>
+                <button type="button" onClick={() => copyCss(`font-variation-settings: ${variation(recipe.axes)};`)}>COPY</button>
               </div>
             </article>
           ))}
         </div>
       </section>
 
-      <section className={styles.stylesSection}>
-        <h2>Axes</h2>
-        <div className={styles.axisColumns}>
-          {AXES.map((axis) => (
-            <div className={styles.axisColumn} key={axis.key}>
-              <h3>{axis.title}</h3>
-              <p>({axis.stops.length} stops)</p>
-              <div className={styles.axisSamples}>
-                {axis.stops.map((stop) => {
-                  const sampleAxes = isolatedAxis(axis.key, stop);
-                  return (
-                    <button
-                      key={stop}
-                      onClick={() => { setMotion(null); setAxes(sampleAxes); }}
-                      style={{ fontVariationSettings: variation(sampleAxes) }}
-                    >
-                      Zebba {stop}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className={styles.sizes}>
-        <h2>Sizes</h2>
-        {[38, 72, 132].map((fontSize) => (
-          <div
-            className={styles.sizeLine}
-            key={fontSize}
-            style={{ fontSize: `${fontSize}px`, fontVariationSettings: variation(axes) }}
-          >
-            {specimen || "Zebba"}
-            <small>{fontSize}</small>
-          </div>
-        ))}
-      </section>
-
-      <section className={styles.inUse}>
-        <h2>In use</h2>
-        <div className={styles.usageHeadline} style={{ fontVariationSettings: '"ROWT" 0, "RONG" 1000, "CHON" 500' }}>
-          Xylo Phonic Rhythms
-        </div>
-        <div className={styles.usageColumns} style={{ fontVariationSettings: '"ROWT" 0, "RONG" 1000, "CHON" 0' }}>
-          <p>Zebba begins with the familiar rhythm of Roboto Mono, then opens into weight, inflation and transformation. Use restrained values for reading and stronger combinations for display.</p>
-          <p>Every axis can move continuously between its minimum and maximum. The same word can become quiet, soft, dense, swollen or deliberately strange without changing fonts.</p>
-          <p>Copy a recipe as a starting point, or tune the sliders until the form fits your layout. Shorter words can usually carry more pressure than long paragraphs.</p>
-        </div>
-      </section>
-
       <section className={styles.glyphSection}>
-        <h2>Letters</h2>
-        <GlyphRow glyphs={UPPERCASE} axes={axes} />
-        <GlyphRow glyphs={LOWERCASE} axes={axes} />
-        <h2 className={styles.numberTitle}>Numbers</h2>
-        <GlyphRow glyphs={NUMBERS} axes={axes} />
+        <h2>LETTERS</h2>
+        <GlyphRow glyphs={UPPERCASE} />
+        <GlyphRow glyphs={LOWERCASE} />
+        <h2 className={styles.numberTitle}>NUMBERS</h2>
+        <GlyphRow glyphs={NUMBERS} />
+      </section>
+
+      <section className={styles.visualTests}>
+        <h2>VISUAL TESTS</h2>
+
+        <article className={styles.multiOutline} aria-label="MULTIPLE OUTLINES">
+          <div>{[0, 1, 2, 3, 4].map((layer) => <AxisWord className={styles.outlineWord} key={layer} layer={layer} text="FALLING UP" />)}</div>
+          <p>MULTIPLE OUTLINES</p>
+        </article>
+
+        <article className={styles.differenceTest}>
+          <div aria-label="UP DOWN">
+            <AxisWord className={styles.differenceWord} text="UP" />
+            <AxisWord className={styles.differenceWord} layer={2} text="DOWN" />
+          </div>
+          <p>FILL DIFFERENCE</p>
+        </article>
+
+        <article className={styles.tightLeading}>
+          <div><AxisWord text="NO" /><AxisWord layer={1} text="FEET" /><AxisWord layer={2} text="NO" /><AxisWord layer={3} text="PROBLEM" /></div>
+          <p>TIGHT LINE HEIGHT</p>
+        </article>
+
+        <article className={styles.tightTracking}>
+          <AxisWord text="HOLDONTIGHT" />
+          <p>TIGHT LETTER SPACING</p>
+        </article>
+
+        <article className={styles.verticalTest}>
+          <AxisWord text="FALL" />
+          <p>VERTICAL TYPE</p>
+        </article>
+
+        <article className={styles.mixedTest}>
+          <div><AxisWord text="UP" /><AxisWord layer={1} text="DOWN" /><AxisWord layer={2} text="SIDEWAYS" /><AxisWord layer={3} text="AGAIN" /></div>
+          <p>FIVE AXIS COMBINATIONS</p>
+        </article>
       </section>
 
       <footer className={styles.footer}>
-        <span>ROWT 0–1000</span>
-        <span>RONG 0–1000</span>
-        <span>CHON 0–1000</span>
+        <span>ROWT 0 TO 1000</span>
+        <span>RONG 0 TO 1000</span>
+        <span>CHON 0 TO 1000</span>
       </footer>
     </main>
   );
 }
 
-function GlyphRow({ glyphs, axes }: { glyphs: string[]; axes: Axes }) {
+function GlyphRow({ glyphs }: { glyphs: string[] }) {
+  return <div className={styles.glyphRow}>{glyphs.map((glyph) => <span key={glyph}>{glyph}</span>)}</div>;
+}
+
+function AxisWord({ text, layer = 0, className = "" }: { text: string; layer?: number; className?: string }) {
   return (
-    <div className={styles.glyphRow} style={{ fontVariationSettings: variation(axes) }}>
-      {glyphs.map((glyph) => <span key={glyph}>{glyph}</span>)}
-    </div>
+    <span className={`${styles.axisWord} ${className}`} aria-label={text}>
+      {Array.from(text).map((letter, index) => {
+        const mode = ((index + layer) % 5) + 1;
+        return (
+          <span
+            aria-hidden="true"
+            className={`${styles.axisLetter} ${styles[`axisMode${mode}`]}`}
+            key={`${letter}-${index}`}
+            style={{
+              "--axis-delay": `${-((index * 0.63) + (layer * 0.41))}s`,
+              "--axis-duration": `${3.1 + ((index + layer) % 6) * 0.52}s`,
+            } as CSSProperties}
+          >
+            {letter === " " ? "\u00a0" : letter}
+          </span>
+        );
+      })}
+    </span>
   );
 }

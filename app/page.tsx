@@ -2,6 +2,7 @@
 
 import { SyntheticEvent, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { upload as uploadBlob } from "@vercel/blob/client";
+import Link from "next/link";
 import { fileToGif, type CaptionPosition } from "@/lib/gif";
 
 type Meme = {
@@ -526,7 +527,7 @@ export default function Home() {
       )}
       <footer className="site-footer">
         <p className="community-note">FOR OUR SMALL CIRCLE. PLEASE KEEP THIS SPACE KIND. CONTACT YUE IF THERE IS A PROBLEM.</p>
-        <p className="font-credit">© Yue Zhou / day.To.day Design / Roboto Mono Zebba. All rights reserved.</p>
+        <p className="font-credit"><Link href="/font-lab">© Yue Zhou / day.To.day Design / Roboto Mono Zebba. All rights reserved.</Link></p>
         <p className="footer-contact"><a href="https://www.instagram.com/yue_yueyuez/">INS yue_yueyuez</a></p>
         <p className="footer-contact"><a href="mailto:fallonyueue@gmail.com">fallonyueue@gmail.com</a></p>
       </footer>

@@ -4,7 +4,7 @@
   color: #111;
   background: #fff;
   font-family: "Zebba", sans-serif;
-  font-variation-settings: "ROWT" 350, "RONG" 0, "CHON" 0;
+  font-variation-settings: "ROWT" 350, "RONG" 1000, "CHON" 0;
 }
 
 .hero {
@@ -15,343 +15,222 @@
   justify-content: space-between;
   text-align: center;
 }
-
-.micro {
-  margin: 0;
-  font: 1rem/1 "Zebba", sans-serif;
-  letter-spacing: .02em;
-}
-
-.heroLine {
-  width: 100%;
-  font: clamp(4rem, 9.5vw, 11.5rem)/.92 "Zebba", sans-serif;
-  letter-spacing: -.035em;
-}
+.micro { margin: 0; font-size: 1rem; line-height: 1; letter-spacing: .02em; }
+.heroLine { width: 100%; font-size: clamp(5rem, 12vw, 14rem); line-height: .72; letter-spacing: -.055em; animation: combo1 6s ease-in-out infinite alternate; }
+.heroLine span { display: block; }
 
 .playground {
   min-height: 100svh;
-  padding: 10vh 5vw 7vh;
+  padding: 10vh 5vw 8vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
-
 .specimen {
   width: 100%;
-  min-height: 1.2em;
-  max-height: 2.5em;
+  min-height: 2em;
+  max-height: 2.2em;
   margin: 0;
-  padding: .08em 0;
+  padding: .06em 0;
   border: 0;
   outline: 0;
   resize: none;
   overflow: hidden;
   background: transparent;
   color: #111;
-  font-family: "Zebba", sans-serif;
-  line-height: .9;
-  letter-spacing: -.035em;
+  font: min(12vw, 10rem)/.72 "Zebba", sans-serif;
+  letter-spacing: -.055em;
   text-align: center;
+  white-space: pre-wrap;
 }
-.specimen[data-motion="all"] { animation: allAxes 16s ease-in-out infinite; }
-.specimen[data-motion="rowt"] { animation: rowtAxis 5s ease-in-out infinite alternate; }
-.specimen[data-motion="rong"] { animation: rongAxis 5s ease-in-out infinite alternate; }
-.specimen[data-motion="chon"] { animation: chonAxis 5s ease-in-out infinite alternate; }
-.specimen[data-motion="threshold"] { animation: thresholdAxis 6s linear infinite alternate; }
+.playground:has(.modeCombo1:checked) .specimen { animation: combo1 5s ease-in-out infinite alternate; }
+.playground:has(.modeCombo2:checked) .specimen { animation: combo2 5s ease-in-out infinite alternate; }
+.playground:has(.modeCombo3:checked) .specimen { animation: combo3 5s ease-in-out infinite alternate; }
+.playground:has(.modeCombo4:checked) .specimen { animation: combo4 5s ease-in-out infinite alternate; }
+.playground:has(.modeCombo5:checked) .specimen { animation: combo5 5s ease-in-out infinite alternate; }
+.playground:has(.modePause:checked) .specimen { animation: none; }
 
-@keyframes allAxes {
-  0%, 100% { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 0; }
-  16% { font-variation-settings: "ROWT" 1000, "RONG" 1000, "CHON" 0; }
-  32% { font-variation-settings: "ROWT" 0, "RONG" 0, "CHON" 500; }
-  48% { font-variation-settings: "ROWT" 1000, "RONG" 0, "CHON" 500; }
-  64% { font-variation-settings: "ROWT" 0, "RONG" 0, "CHON" 1000; }
-  80% { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 500; }
-  92% { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 1000; }
-}
-@keyframes rowtAxis {
+@keyframes combo1 {
   from { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 0; }
   to { font-variation-settings: "ROWT" 1000, "RONG" 1000, "CHON" 0; }
 }
-@keyframes rongAxis {
-  from { font-variation-settings: "ROWT" 0, "RONG" 0, "CHON" 0; }
-  to { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 0; }
+@keyframes combo2 {
+  from { font-variation-settings: "ROWT" 0, "RONG" 999, "CHON" 0; }
+  to { font-variation-settings: "ROWT" 0, "RONG" 999, "CHON" 1000; }
 }
-@keyframes chonAxis {
-  from { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 0; }
-  to { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 1000; }
+@keyframes combo3 {
+  from { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 1000; }
+  to { font-variation-settings: "ROWT" 1000, "RONG" 1000, "CHON" 1000; }
 }
-@keyframes thresholdAxis {
-  from { font-variation-settings: "ROWT" 250, "RONG" 1000, "CHON" 0; }
-  to { font-variation-settings: "ROWT" 450, "RONG" 1000, "CHON" 0; }
+@keyframes combo4 {
+  from { font-variation-settings: "ROWT" 1000, "RONG" 1000, "CHON" 0; }
+  to { font-variation-settings: "ROWT" 1000, "RONG" 1000, "CHON" 1000; }
+}
+@keyframes combo5 {
+  from { font-variation-settings: "ROWT" 1000, "RONG" 350, "CHON" 0; }
+  to { font-variation-settings: "ROWT" 1000, "RONG" 999, "CHON" 0; }
 }
 
 .motionModes {
+  position: relative;
+  z-index: 3;
   margin-top: 7vh;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px 22px;
+  gap: 8px 12px;
 }
-.motionModes button {
-  padding: 0;
+.motionModes span { position: relative; }
+.motionModes label,
+.recipeMeta button {
+  min-height: 34px;
+  padding: 6px 9px;
   border: 0;
   border-bottom: 1px solid transparent;
   background: transparent;
   color: #777;
-  font: .8rem/1.4 "Zebba", sans-serif;
+  font: .8rem/1.2 "Zebba", sans-serif;
+  font-variation-settings: "ROWT" 350, "RONG" 1000, "CHON" 0;
   cursor: pointer;
 }
-.motionModes button:hover,
-.motionModes button[data-active="true"] {
-  border-color: currentColor;
-  color: #111;
-}
+.motionModes label:hover, .modeInput:checked + label, .recipeMeta button:hover { border-color: currentColor; color: #111; }
+.modeInput { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 
 .controlRow {
+  position: relative;
+  z-index: 2;
   width: min(1080px, 100%);
-  margin-top: 5vh;
+  margin-top: 6vh;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: clamp(24px, 5vw, 74px);
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(28px, 6vw, 90px);
 }
-
-.control {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 8px;
-  font-size: .9rem;
-}
-
+.control { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; font-size: .9rem; }
 .control output { text-align: right; }
-.control input {
-  grid-column: 1 / -1;
-  width: 100%;
-  height: 18px;
-  margin: 5px 0 0;
-  appearance: none;
-  background: transparent;
-  cursor: pointer;
-}
+.control input { grid-column: 1 / -1; width: 100%; height: 28px; margin: 2px 0 0; appearance: none; background: transparent; cursor: pointer; touch-action: none; }
 .control input::-webkit-slider-runnable-track { height: 3px; background: #111; }
-.control input::-webkit-slider-thumb {
-  width: 18px;
-  height: 18px;
-  margin-top: -7.5px;
-  appearance: none;
-  border-radius: 50%;
-  background: #111;
-}
+.control input::-webkit-slider-thumb { width: 18px; height: 18px; margin-top: -7.5px; appearance: none; border-radius: 50%; background: #111; }
 .control input::-moz-range-track { height: 3px; background: #111; }
 .control input::-moz-range-thumb { width: 18px; height: 18px; border: 0; border-radius: 50%; background: #111; }
+.copy { max-width: 100%; margin-top: 7vh; padding: 0; border: 0; background: transparent; color: #111; cursor: pointer; text-align: center; }
+.copy code { display: block; font: .76rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+.copy span { display: inline-block; margin-top: 12px; border-bottom: 1px solid currentColor; font-size: .8rem; }
 
-.copy {
-  max-width: 100%;
-  margin-top: 7vh;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #111;
-  cursor: pointer;
-  text-align: center;
-}
-.copy code {
-  display: block;
-  font: .8rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
-  overflow-wrap: anywhere;
-}
-.copy span {
-  display: inline-block;
-  margin-top: 12px;
-  border-bottom: 1px solid currentColor;
-  font-size: .8rem;
-}
-.fileDefault {
-  margin: 4vh 0 0;
-  color: #777;
-  font: .7rem/1.2 "Zebba", sans-serif;
-  letter-spacing: .025em;
-}
-.motionNote {
-  margin: 10px 0 0;
-  color: #111;
-  font: .7rem/1.2 "Zebba", sans-serif;
-  letter-spacing: .025em;
-}
-
-.stylesSection {
-  min-height: 100svh;
-  padding: 15vh 7vw;
-}
-.stylesSection h2,
-.recipesSection h2,
-.sizes h2,
-.inUse h2,
-.glyphSection h2 {
+.recipesSection, .visualTests, .glyphSection { padding: 14vh 5vw; }
+.recipesSection h2, .visualTests h2, .glyphSection h2 {
   margin: 0;
-  font: clamp(2.3rem, 4vw, 4.5rem)/1 "Zebba", sans-serif;
-  font-variation-settings: "ROWT" 350, "RONG" 0, "CHON" 0 !important;
+  font-size: clamp(2.3rem, 4vw, 4.5rem);
+  line-height: 1;
   text-align: center;
+  font-variation-settings: "ROWT" 350, "RONG" 1000, "CHON" 0;
 }
-.axisColumns {
-  margin-top: 17vh;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 9vw;
-}
-.axisColumn h3 { margin: 0; font: 2rem/1 "Zebba", sans-serif; }
-.axisColumn > p { margin: 8px 0 55px; color: #777; font-size: .85rem; }
-.axisSamples {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 20px;
-}
-.axisSamples button {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #111;
-  font: 2rem/1 "Zebba", sans-serif;
-  text-align: left;
-  cursor: pointer;
-}
-.axisSamples button:hover::after { content: " ●"; color: #d977f2; }
 
-.recipesSection { padding: 14vh 5vw; }
-.recipes {
-  margin-top: 12vh;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 7vw;
-  row-gap: 14vh;
-}
+.recipes { margin-top: 10vh; display: grid; grid-template-columns: 1fr; row-gap: 14vh; }
 .recipe { min-width: 0; }
 .recipeWord {
-  min-height: 250px;
+  min-height: 38vh;
   display: flex;
   align-items: center;
-  overflow-wrap: anywhere;
-  font: clamp(4rem, 8vw, 8rem)/.82 "Zebba", sans-serif;
-}
-.recipeMeta {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: end;
-  gap: 10px 20px;
-}
-.recipeMeta h3 { margin: 0 0 5px; font: 1.25rem/1 "Zebba", sans-serif; }
-.recipeMeta p { margin: 0; font: .75rem/1.25 "Zebba", sans-serif; }
-.recipeMeta code {
-  grid-column: 1 / -1;
-  grid-row: 2;
-  color: #555;
-  font: .66rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
-  overflow-wrap: anywhere;
-}
-.recipeMeta button {
-  padding: 0;
-  border: 0;
-  border-bottom: 1px solid currentColor;
-  background: transparent;
-  color: #111;
-  font: .75rem/1.2 "Zebba", sans-serif;
-  cursor: pointer;
-}
-
-.sizes {
-  min-height: 100svh;
-  padding: 12vh 6vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.sizeLine {
-  position: relative;
-  padding-right: 70px;
-  font-family: "Zebba", sans-serif;
-  line-height: .9;
-  overflow-wrap: anywhere;
-}
-.sizeLine small {
-  position: absolute;
-  right: 0;
-  bottom: .15em;
-  font: .75rem/1 "Zebba", sans-serif;
-}
-
-.inUse {
-  min-height: 110svh;
-  padding: 12vh 6vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.usageHeadline {
-  padding: 12vh 0;
-  font: clamp(4rem, 9vw, 10rem)/.88 "Zebba", sans-serif;
+  justify-content: center;
+  white-space: nowrap;
+  font-size: clamp(2.4rem, 6vw, 7.2rem);
+  line-height: .76;
+  letter-spacing: -.045em;
   text-align: center;
 }
-.usageColumns {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4vw;
-  font: clamp(1rem, 1.35vw, 1.45rem)/1.45 "Zebba", sans-serif;
-}
-.usageColumns p { margin: 0; }
+.recipe[data-effect="combo1"] .recipeWord { animation: combo1 4.2s ease-in-out infinite alternate; }
+.recipe[data-effect="combo2"] .recipeWord { animation: combo2 4.8s ease-in-out infinite alternate; }
+.recipe[data-effect="combo3"] .recipeWord { animation: combo3 5.1s ease-in-out infinite alternate; }
+.recipe[data-effect="combo4"] .recipeWord { animation: combo4 4.6s ease-in-out infinite alternate; }
+.recipe[data-effect="combo5"] .recipeWord { animation: combo5 5.3s ease-in-out infinite alternate; }
+.recipeMeta { width: min(980px, 100%); margin: 0 auto; display: grid; grid-template-columns: 1fr auto auto; align-items: end; gap: 10px 12px; font-variation-settings: "ROWT" 350, "RONG" 1000, "CHON" 0; }
+.recipeMeta h3 { margin: 0 0 6px; font-size: 1.2rem; font-weight: inherit; }
+.recipeMeta p { margin: 0; font-size: .74rem; line-height: 1.35; }
+.recipeMeta button { color: #111; }
 
-.glyphSection { min-height: 100svh; padding: 10vh 5vw 13vh; }
-.glyphRow {
-  max-width: 1720px;
-  margin: 8vh auto 0;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 4px;
-  font-family: "Zebba", sans-serif;
+.visualTests { min-height: 100svh; }
+.visualTests article { min-height: 88svh; display: flex; flex-direction: column; justify-content: center; }
+.visualTests article > p { margin: 4vh 0 0; font-size: .78rem; text-align: center; letter-spacing: .03em; font-variation-settings: "ROWT" 350, "RONG" 1000, "CHON" 0; }
+.axisWord { display: inline-flex; justify-content: center; white-space: pre; }
+.axisLetter {
+  display: inline-block;
+  animation-duration: var(--axis-duration, 4.5s);
+  animation-delay: var(--axis-delay, 0s);
+  animation-timing-function: cubic-bezier(.42,0,.58,1);
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  will-change: font-variation-settings;
 }
-.glyphRow span {
-  width: clamp(54px, 5.2vw, 95px);
-  aspect-ratio: 1;
-  display: grid;
-  place-items: center;
-  border-radius: 13px;
-  background: #f3f3f3;
-  font-size: clamp(2rem, 3vw, 3.8rem);
+.axisMode1 { animation-name: combo1; }
+.axisMode2 { animation-name: combo2; animation-direction: alternate-reverse; }
+.axisMode3 { animation-name: combo3; }
+.axisMode4 { animation-name: combo4; animation-direction: alternate-reverse; }
+.axisMode5 { animation-name: combo5; }
+
+.multiOutline > div { position: relative; min-height: 40vw; display: grid; place-items: center; }
+.multiOutline .outlineWord {
+  grid-area: 1 / 1;
+  color: transparent;
+  -webkit-text-stroke: clamp(1px, .13vw, 2.5px) #111;
+  font-size: clamp(6rem, 17vw, 20rem);
+  line-height: .75;
+  text-align: center;
 }
+.multiOutline .outlineWord:nth-child(2) { transform: translate(-1.2vw, -.8vw); }
+.multiOutline .outlineWord:nth-child(3) { transform: translate(1.1vw, .9vw); }
+.multiOutline .outlineWord:nth-child(4) { transform: translate(-2vw, 1.5vw); }
+.multiOutline .outlineWord:nth-child(5) { transform: translate(2vw, -1.4vw); }
+
+.differenceTest > div { position: relative; min-height: 54vw; isolation: isolate; }
+.differenceTest .differenceWord {
+  position: absolute;
+  width: 68vw;
+  color: #000;
+  font-size: clamp(8rem, 24vw, 28rem);
+  line-height: .72;
+  letter-spacing: -.06em;
+  text-align: center;
+}
+.differenceTest .differenceWord:first-child { left: 1vw; top: 4vw; }
+.differenceTest .differenceWord:last-child { right: 1vw; top: 14vw; color: #000; mix-blend-mode: difference; }
+
+.tightLeading > div { display: flex; flex-direction: column; align-items: center; font-size: clamp(7rem, 19vw, 22rem); line-height: .5; letter-spacing: -.06em; }
+.tightTracking > .axisWord { white-space: nowrap; font-size: clamp(5rem, 15vw, 17rem); line-height: .72; letter-spacing: -.19em; text-align: center; }
+.verticalTest > .axisWord { min-height: 65vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.verticalTest .axisLetter { display: block; margin-bottom: .06em; font-size: clamp(4rem, 8vw, 9rem); line-height: .84; letter-spacing: 0; }
+.mixedTest > div { min-height: 65vh; display: grid; grid-template-columns: 1fr 1fr; place-items: center; gap: 2vw; }
+.mixedTest .axisWord { font-size: clamp(4rem, 10vw, 12rem); line-height: .68; }
+
+.glyphSection { min-height: 100svh; }
+.glyphRow { max-width: 1720px; margin: 8vh auto 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; font-variation-settings: "ROWT" 350, "RONG" 1000, "CHON" 0; }
+.glyphRow span { width: clamp(54px, 5.2vw, 95px); aspect-ratio: 1; display: grid; place-items: center; border-radius: 13px; background: #f3f3f3; font-size: clamp(2rem, 3vw, 3.8rem); cursor: crosshair; }
+.glyphRow span:nth-child(5n + 1):hover { animation: combo1 1.5s ease-in-out infinite alternate; }
+.glyphRow span:nth-child(5n + 2):hover { animation: combo2 1.5s ease-in-out infinite alternate; }
+.glyphRow span:nth-child(5n + 3):hover { animation: combo3 1.5s ease-in-out infinite alternate; }
+.glyphRow span:nth-child(5n + 4):hover { animation: combo4 1.5s ease-in-out infinite alternate; }
+.glyphRow span:nth-child(5n):hover { animation: combo5 1.5s ease-in-out infinite alternate; }
 .numberTitle { margin-top: 12vh !important; }
+.footer { min-height: 28vh; padding: 7vh 7vw; display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; font-size: .9rem; }
 
-.footer {
-  min-height: 28vh;
-  padding: 7vh 7vw;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 30px;
-  font-size: .9rem;
-}
+@media (prefers-reduced-motion: reduce) { .lab * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
 
 @media (max-width: 760px) {
   .hero { min-height: 82svh; }
-  .heroLine { font-size: clamp(3.4rem, 17vw, 6rem); }
+  .heroLine { font-size: clamp(4rem, 19vw, 7rem); }
   .playground { min-height: 90svh; padding-inline: 18px; }
-  .specimen { font-size: min(var(--specimen-size, 100px), 25vw) !important; }
-  .controlRow { grid-template-columns: 1fr 1fr; gap: 30px 24px; }
+  .specimen { font-size: 17vw; }
+  .controlRow { grid-template-columns: 1fr; gap: 24px; }
   .copy code { font-size: .62rem; }
-  .stylesSection { padding: 12vh 24px; }
-  .axisColumns { margin-top: 10vh; grid-template-columns: 1fr; gap: 80px; }
-  .axisColumn { text-align: center; }
-  .axisColumn > p { margin-bottom: 28px; }
-  .axisSamples { align-items: center; }
-  .recipesSection { padding-inline: 20px; }
-  .recipes { grid-template-columns: 1fr; row-gap: 10vh; }
-  .recipeWord { min-height: 180px; }
-  .recipeMeta { grid-template-columns: 1fr auto auto; }
-  .sizes { min-height: 80svh; padding-inline: 22px; }
-  .inUse { min-height: 100svh; padding-inline: 22px; }
-  .usageColumns { grid-template-columns: 1fr; gap: 28px; }
+  .recipesSection, .visualTests { padding-inline: 20px; }
+  .recipes { row-gap: 10vh; }
+  .recipeWord { min-height: 230px; font-size: clamp(1.25rem, 6.5vw, 3rem); }
+  .visualTests article { min-height: 72svh; }
+  .verticalTest > div { min-height: 50vh; }
+  .differenceTest span { width: 78vw; }
+  .differenceTest span:first-child { left: 0; }
+  .differenceTest span:last-child { right: 0; }
+  .mixedTest > div { grid-template-columns: 1fr; min-height: 55vh; }
   .glyphSection { padding-inline: 15px; }
   .footer { flex-direction: column; align-items: flex-start; justify-content: flex-end; }
 }
