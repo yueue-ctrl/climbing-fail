@@ -28,6 +28,22 @@
   letter-spacing: -.035em;
 }
 
+.origin {
+  min-height: 115svh;
+  padding: 11vh 7vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6vh;
+  text-align: center;
+}
+.originStep { display: flex; flex-direction: column; align-items: center; }
+.originStep span { margin-bottom: 16px; font-size: .8rem; letter-spacing: .08em; }
+.originStep strong { font: clamp(3.8rem, 8vw, 9rem)/.86 "Zebba", sans-serif; }
+.originStep small { margin-top: 20px; font: 1rem/1.25 "Zebba", sans-serif; }
+.originArrow { font-size: 2rem; }
+
 .playground {
   min-height: 100svh;
   padding: 10vh 5vw 7vh;
@@ -120,7 +136,9 @@
   padding: 15vh 7vw;
 }
 .stylesSection h2,
+.recipesSection h2,
 .sizes h2,
+.inUse h2,
 .glyphSection h2 {
   margin: 0;
   font: clamp(2.3rem, 4vw, 4.5rem)/1 "Zebba", sans-serif;
@@ -153,6 +171,47 @@
 }
 .axisSamples button:hover::after { content: " ●"; color: #d977f2; }
 
+.recipesSection { padding: 14vh 5vw; }
+.recipes {
+  margin-top: 12vh;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 7vw;
+  row-gap: 14vh;
+}
+.recipe { min-width: 0; }
+.recipeWord {
+  min-height: 250px;
+  display: flex;
+  align-items: center;
+  overflow-wrap: anywhere;
+  font: clamp(4rem, 8vw, 8rem)/.82 "Zebba", sans-serif;
+}
+.recipeMeta {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: end;
+  gap: 10px 20px;
+}
+.recipeMeta h3 { margin: 0 0 5px; font: 1.25rem/1 "Zebba", sans-serif; }
+.recipeMeta p { margin: 0; font: .75rem/1.25 "Zebba", sans-serif; }
+.recipeMeta code {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  color: #555;
+  font: .66rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  overflow-wrap: anywhere;
+}
+.recipeMeta button {
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  background: transparent;
+  color: #111;
+  font: .75rem/1.2 "Zebba", sans-serif;
+  cursor: pointer;
+}
+
 .sizes {
   min-height: 100svh;
   padding: 12vh 6vw;
@@ -173,6 +232,26 @@
   bottom: .15em;
   font: .75rem/1 "Zebba", sans-serif;
 }
+
+.inUse {
+  min-height: 110svh;
+  padding: 12vh 6vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.usageHeadline {
+  padding: 12vh 0;
+  font: clamp(4rem, 9vw, 10rem)/.88 "Zebba", sans-serif;
+  text-align: center;
+}
+.usageColumns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4vw;
+  font: clamp(1rem, 1.35vw, 1.45rem)/1.45 "Zebba", sans-serif;
+}
+.usageColumns p { margin: 0; }
 
 .glyphSection { min-height: 100svh; padding: 10vh 5vw 13vh; }
 .glyphRow {
@@ -217,7 +296,15 @@
   .axisColumn { text-align: center; }
   .axisColumn > p { margin-bottom: 28px; }
   .axisSamples { align-items: center; }
+  .origin { min-height: 100svh; }
+  .originStep strong { font-size: clamp(3rem, 15vw, 5rem); }
+  .recipesSection { padding-inline: 20px; }
+  .recipes { grid-template-columns: 1fr; row-gap: 10vh; }
+  .recipeWord { min-height: 180px; }
+  .recipeMeta { grid-template-columns: 1fr auto auto; }
   .sizes { min-height: 80svh; padding-inline: 22px; }
+  .inUse { min-height: 100svh; padding-inline: 22px; }
+  .usageColumns { grid-template-columns: 1fr; gap: 28px; }
   .glyphSection { padding-inline: 15px; }
   .footer { flex-direction: column; align-items: flex-start; justify-content: flex-end; }
 }
