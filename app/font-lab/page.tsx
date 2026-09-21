@@ -183,10 +183,24 @@ export default function FontLab() {
         </article>
       </section>
 
+      <section className={styles.mediaShowcase} aria-label="Roboto Mono Zebba videos">
+        <video src="/variable-font-1.mp4" autoPlay loop muted playsInline preload="metadata" />
+        <video src="/variable-font-2.mp4" autoPlay loop muted playsInline preload="metadata" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/zebba-green-5.gif" alt="Roboto Mono Zebba variable font shown on phones" />
+      </section>
+
       <footer className={styles.footer}>
-        <span>ROWT 0 TO 1000</span>
-        <span>RONG 0 TO 1000</span>
-        <span>CHON 0 TO 1000</span>
+        <div className={styles.footerAxes}>
+          <span>ROWT 0 TO 1000</span>
+          <span>RONG 0 TO 1000</span>
+          <span>CHON 0 TO 1000</span>
+        </div>
+        <div className={styles.labContact}>
+          <p>© Yue Zhou / day.To.day Design / Roboto Mono Zebba. All rights reserved.</p>
+          <a href="https://www.instagram.com/yue_yueyuez/">INS yue_yueyuez</a>
+          <a href="mailto:fallonyueue@gmail.com">fallonyueue@gmail.com</a>
+        </div>
       </footer>
     </main>
   );

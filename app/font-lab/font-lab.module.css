@@ -220,7 +220,14 @@
 .glyphRow span:nth-child(5n + 4):hover { animation: combo4 1.5s ease-in-out infinite alternate; }
 .glyphRow span:nth-child(5n):hover { animation: combo5 1.5s ease-in-out infinite alternate; }
 .numberTitle { margin-top: 12vh !important; }
-.footer { min-height: 28vh; padding: 7vh 7vw; display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; font-size: .9rem; }
+.mediaShowcase { padding: 12vh 5vw 6vh; display: flex; flex-direction: column; align-items: center; gap: 10vh; }
+.mediaShowcase video, .mediaShowcase img { display: block; width: min(520px, 74vw); height: auto; object-fit: contain; }
+.footer { min-height: 34vh; padding: 7vh 7vw; display: flex; flex-direction: column; justify-content: flex-end; gap: 9vh; font-size: .9rem; }
+.footerAxes { display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; }
+.labContact { display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center; font-size: .78rem; }
+.labContact p { margin: 0 0 4px; }
+.labContact a { color: inherit; text-decoration: none; }
+.labContact a:hover { text-decoration: underline; }
 
 @media (prefers-reduced-motion: reduce) { .lab * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
 
@@ -241,5 +248,7 @@
   .differenceTest span:last-child { right: 0; }
   .mixedTest > div { grid-template-columns: 1fr; min-height: 55vh; }
   .glyphSection { padding-inline: 15px; }
-  .footer { flex-direction: column; align-items: flex-start; justify-content: flex-end; }
+  .mediaShowcase { padding-inline: 20px; gap: 7vh; }
+  .mediaShowcase video, .mediaShowcase img { width: min(420px, 86vw); }
+  .footerAxes { flex-direction: column; align-items: flex-start; }
 }
