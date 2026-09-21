@@ -79,17 +79,17 @@ h1 {
 }
 h1 span { display: block; white-space: nowrap; }
 h1 span + span { margin-top: .06em; }
-.async-variable-text { display: inline; }
-.async-letter {
-  display: inline-block;
-  font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 0;
-  animation: title-scheme-one var(--letter-duration, 4s) cubic-bezier(.45,0,.55,1) var(--letter-delay, 0s) infinite alternate;
-  will-change: font-variation-settings;
-}
-.async-space { width: .33em; }
 @keyframes title-scheme-one {
   from { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 0; }
   to { font-variation-settings: "ROWT" 1000, "RONG" 1000, "CHON" 0; }
+}
+.scheme-two-hover {
+  font-variation-settings: "ROWT" 0, "RONG" 999, "CHON" 0;
+  transition: font-variation-settings .48s cubic-bezier(.2,.72,.2,1);
+}
+.scheme-two-hover:hover,
+.scheme-two-hover:focus-visible {
+  font-variation-settings: "ROWT" 0, "RONG" 999, "CHON" 1000;
 }
 .subtitle {
   margin: 27px 0 0;

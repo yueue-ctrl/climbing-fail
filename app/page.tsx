@@ -1,6 +1,6 @@
 "use client";
 
-import { CSSProperties, SyntheticEvent, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { SyntheticEvent, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { upload as uploadBlob } from "@vercel/blob/client";
 import { fileToGif, type CaptionPosition } from "@/lib/gif";
 
@@ -18,26 +18,6 @@ type Meme = {
 type Comment = { id: number; author: string; body: string; createdAt: number };
 const ADMIN_PAGE_SIZE = 5;
 const FONT_MORPH_SELECTOR = "p, small, button, a, label, input, textarea";
-
-function AsyncVariableText({ text }: { text: string }) {
-  return (
-    <span className="async-variable-text" aria-label={text}>
-      {Array.from(text).map((character, index) => (
-        <span
-          aria-hidden="true"
-          className={character === " " ? "async-letter async-space" : "async-letter"}
-          key={`${character}-${index}`}
-          style={{
-            "--letter-delay": `${-(index % 7) * 0.41}s`,
-            "--letter-duration": `${3.4 + (index % 5) * 0.48}s`,
-          } as CSSProperties}
-        >
-          {character === " " ? "\u00a0" : character}
-        </span>
-      ))}
-    </span>
-  );
-}
 
 function shuffle<T>(items: T[]) {
   const shuffled = [...items];
@@ -160,7 +140,7 @@ export default function Home() {
     const findTarget = (target: EventTarget | null) => {
       if (!(target instanceof Element)) return null;
       const element = target.closest(FONT_MORPH_SELECTOR);
-      if (!(element instanceof HTMLElement) || element.closest(".caption-preview") || element.closest(".async-variable-text")) return null;
+      if (!(element instanceof HTMLElement) || element.closest(".caption-preview") || element.closest(".scheme-two-hover")) return null;
       return element;
     };
     const animationFor = (element: HTMLElement) => {
@@ -392,15 +372,15 @@ export default function Home() {
             <span>{gravityUndone ? "GRAVITY: 0," : "GRAVITY: 1,"}</span>
             <span>{gravityUndone ? "US: 1" : "US: 0"}</span>
           </h1>
-          <p className="subtitle"><AsyncVariableText text="A CLIMBING FAIL MEME COLLECTION BY YUE & FRIENDS" /></p>
+          <p className="subtitle scheme-two-hover">A CLIMBING FAIL MEME COLLECTION BY YUE &amp; FRIENDS</p>
         </div>
         <div className="header-actions">
-          <button className="reverse-all" type="button" aria-pressed={gravityUndone}
+          <button className="reverse-all scheme-two-hover" type="button" aria-pressed={gravityUndone}
             onClick={() => setGravityUndone((value) => !value)}>
-            <AsyncVariableText text={gravityUndone ? "RESTORE GRAVITY" : "UNDO GRAVITY"} />
+            {gravityUndone ? "RESTORE GRAVITY" : "UNDO GRAVITY"}
           </button>
-          <label className="upload">
-            {uploading ? progress : <AsyncVariableText text="UPLOAD" />}
+          <label className="upload scheme-two-hover">
+            {uploading ? progress : "UPLOAD"}
             <input ref={fileRef} type="file" accept=".mov,video/quicktime,video/mp4,video/webm,image/*" disabled={uploading}
               onChange={(event) => event.target.files?.[0] && chooseFile(event.target.files[0])} />
           </label>
