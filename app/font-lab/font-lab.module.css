@@ -179,39 +179,8 @@
 .outlineTwo { animation: combo2 5.4s ease-in-out infinite alternate-reverse; }
 .outlineThree { animation: combo5 5s ease-in-out infinite alternate; }
 
-.blackImpact {
-  width: calc(100% + 10vw);
-  margin-left: -5vw;
-  padding-inline: 3vw;
-  overflow: hidden;
-  background: #111;
-  color: #fff;
-}
-.blackImpact > div { display: flex; flex-direction: column; align-items: center; font-size: clamp(9rem, 27vw, 32rem); line-height: .55; letter-spacing: -.095em; }
-.blackImpact > div span:first-child { animation: impactBlack 3.8s cubic-bezier(.65,0,.2,1) infinite alternate; }
-.blackImpact > div span:last-child { animation: impactBlack 3.8s cubic-bezier(.65,0,.2,1) -1.9s infinite alternate-reverse; }
-.blackImpact > p { color: #fff; }
-@keyframes impactBlack {
-  from { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 0; transform: scaleX(.72); }
-  to { font-variation-settings: "ROWT" 1000, "RONG" 1000, "CHON" 1000; transform: scaleX(1.06); }
-}
-
-.collisionTest { overflow: hidden; }
-.collisionTest > div { min-height: 68vh; position: relative; display: grid; place-items: center; }
-.collisionTest > div span { position: absolute; font-size: clamp(10rem, 29vw, 34rem); line-height: .65; letter-spacing: -.09em; }
-.collisionTest > div span:first-child { animation: collideLeft 4.4s cubic-bezier(.75,0,.25,1) infinite alternate; }
-.collisionTest > div span:last-child { animation: collideRight 4.4s cubic-bezier(.75,0,.25,1) infinite alternate; }
-@keyframes collideLeft {
-  from { font-variation-settings: "ROWT" 100, "RONG" 1000, "CHON" 0; transform: translateX(-46vw) scaleX(.6); }
-  to { font-variation-settings: "ROWT" 1000, "RONG" 1000, "CHON" 1000; transform: translateX(-8vw) scaleX(1); }
-}
-@keyframes collideRight {
-  from { font-variation-settings: "ROWT" 1000, "RONG" 350, "CHON" 0; transform: translateX(46vw) scaleX(.6); }
-  to { font-variation-settings: "ROWT" 0, "RONG" 999, "CHON" 1000; transform: translateX(8vw) scaleX(1); }
-}
-
-.typeWall { overflow: hidden; }
-.typeWall > div { width: 116%; margin-left: -8%; display: flex; flex-direction: column; align-items: center; font-size: clamp(3.6rem, 8.5vw, 10rem); line-height: .68; letter-spacing: -.06em; white-space: nowrap; }
+.typeWall { overflow: visible; padding-inline: max(5vw, 28px); }
+.typeWall > div { width: 100%; max-width: 100%; margin: 0 auto; display: flex; flex-direction: column; align-items: center; font-size: clamp(1.8rem, 6vw, 7rem); line-height: .72; letter-spacing: -.07em; white-space: nowrap; text-align: center; }
 .typeWall > div span:nth-child(1) { animation: combo1 3.6s ease-in-out infinite alternate; }
 .typeWall > div span:nth-child(2) { animation: combo2 4.2s ease-in-out -.8s infinite alternate-reverse; }
 .typeWall > div span:nth-child(3) { animation: combo3 3.9s ease-in-out -1.6s infinite alternate; }

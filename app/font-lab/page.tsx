@@ -143,16 +143,6 @@ export default function FontLab() {
           <p>OUTLINE AXIS TESTS</p>
         </article>
 
-        <article className={styles.blackImpact}>
-          <div><span>GRAVITY</span><span>LEFT</span></div>
-          <p>FULL WEIGHT IMPACT</p>
-        </article>
-
-        <article className={styles.collisionTest}>
-          <div><span>FALL</span><span>RISE</span></div>
-          <p>AXIS COLLISION</p>
-        </article>
-
         <article className={styles.typeWall}>
           <div>
             <span>NO GRAVITY NO GRAVITY</span>
