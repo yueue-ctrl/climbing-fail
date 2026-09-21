@@ -14,7 +14,7 @@
   --hand: "Zebba", sans-serif;
   --plain: "Zebba", sans-serif;
   --font-rest: "ROWT" 350, "RONG" 0, "CHON" 0;
-  --font-title: "ROWT" 1000, "RONG" 0, "CHON" 1000;
+  --font-title: "ROWT" 1000, "RONG" 1000, "CHON" 1000;
   --font-squashed: "ROWT" 1000, "RONG" 1000, "CHON" 1000;
 }
 
