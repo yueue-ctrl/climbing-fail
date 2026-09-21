@@ -75,13 +75,23 @@ h1 {
   color: var(--ink);
   text-shadow: 0 0 18px white, 0 0 18px white;
   font-variation-settings: var(--font-title);
-  animation: title-scheme-one 4.6s cubic-bezier(.45,0,.55,1) infinite alternate;
 }
-h1 span { display: block; white-space: nowrap; }
-h1 span + span { margin-top: .06em; }
-@keyframes title-scheme-one {
-  from { font-variation-settings: "ROWT" 0, "RONG" 1000, "CHON" 0; }
-  to { font-variation-settings: "ROWT" 1000, "RONG" 1000, "CHON" 0; }
+h1 > .gravity-line { display: block; white-space: nowrap; }
+h1 > .gravity-line + .gravity-line { margin-top: .06em; }
+.gravity-letter {
+  display: inline-block;
+  font-variation-settings: "ROWT" 100, "RONG" 1000, "CHON" 0;
+  animation: gravity-rowt 3.4s cubic-bezier(.45,0,.55,1) infinite alternate;
+  will-change: font-variation-settings;
+}
+.gravity-space { width: .33em; }
+.gravity-letter:nth-child(2n) { animation-delay: -.7s; animation-duration: 4.1s; }
+.gravity-letter:nth-child(3n) { animation-delay: -1.6s; animation-duration: 3.7s; animation-direction: alternate-reverse; }
+.gravity-letter:nth-child(4n) { animation-delay: -2.4s; animation-duration: 4.6s; }
+.gravity-letter:nth-child(5n) { animation-delay: -3.1s; animation-duration: 3.2s; animation-direction: alternate-reverse; }
+@keyframes gravity-rowt {
+  from { font-variation-settings: "ROWT" 100, "RONG" 1000, "CHON" 0; }
+  to { font-variation-settings: "ROWT" 350, "RONG" 1000, "CHON" 0; }
 }
 .scheme-two-hover {
   font-variation-settings: "ROWT" 350, "RONG" 1000, "CHON" 0;

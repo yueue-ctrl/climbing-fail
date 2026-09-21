@@ -20,6 +20,18 @@ type Comment = { id: number; author: string; body: string; createdAt: number };
 const ADMIN_PAGE_SIZE = 5;
 const FONT_MORPH_SELECTOR = "p, small, button, a, label, input, textarea";
 
+function GravityTitleLine({ text }: { text: string }) {
+  return (
+    <span className="gravity-line" aria-label={text}>
+      {Array.from(text).map((character, index) => (
+        <span className={character === " " ? "gravity-letter gravity-space" : "gravity-letter"} aria-hidden="true" key={`${character}-${index}`}>
+          {character === " " ? "\u00a0" : character}
+        </span>
+      ))}
+    </span>
+  );
+}
+
 function shuffle<T>(items: T[]) {
   const shuffled = [...items];
   for (let index = shuffled.length - 1; index > 0; index--) {
@@ -370,8 +382,8 @@ export default function Home() {
       <header>
         <div className="brand">
           <h1>
-            <span>{gravityUndone ? "GRAVITY: 0," : "GRAVITY: 1,"}</span>
-            <span>{gravityUndone ? "US: 1" : "US: 0"}</span>
+            <GravityTitleLine text={gravityUndone ? "GRAVITY: 0," : "GRAVITY: 1,"} />
+            <GravityTitleLine text={gravityUndone ? "US: 1" : "US: 0"} />
           </h1>
           <p className="subtitle scheme-two-hover">A CLIMBING FAIL MEME COLLECTION BY YUE &amp; FRIENDS</p>
         </div>
