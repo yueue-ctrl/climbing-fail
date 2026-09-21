@@ -67,6 +67,8 @@ export default function Home() {
   const [adminOpen, setAdminOpen] = useState(false);
   const [adminPage, setAdminPage] = useState(1);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [adminComments, setAdminComments] = useState<Record<string, Comment[]>>({});
+  const [deletingCommentId, setDeletingCommentId] = useState<number | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [caption, setCaption] = useState("");
@@ -281,12 +283,62 @@ export default function Home() {
     }
   }
 
+  async function removeComment(meme: Meme, item: Comment) {
+    if (!window.confirm(`DELETE COMMENT BY ${item.author}?`)) return;
+    setDeletingCommentId(item.id);
+    try {
+      const response = await fetch(`/api/comments/${item.id}`, {
+        method: "DELETE",
+        headers: { "x-admin-trigger": "zy" },
+      });
+      if (!response.ok) throw new Error(await response.text());
+      const summary = await response.json() as {
+        memeId: string;
+        commentCount: number;
+        latestComment?: { author: string; body: string };
+      };
+      setAdminComments((items) => ({
+        ...items,
+        [meme.id]: (items[meme.id] ?? []).filter((comment) => comment.id !== item.id),
+      }));
+      setComments((items) => selected?.id === meme.id ? items.filter((comment) => comment.id !== item.id) : items);
+      setMemes((items) => items.map((entry) => entry.id === summary.memeId ? {
+        ...entry,
+        commentCount: summary.commentCount,
+        latestComment: summary.latestComment,
+      } : entry));
+      setSelected((entry) => entry?.id === summary.memeId ? {
+        ...entry,
+        commentCount: summary.commentCount,
+        latestComment: summary.latestComment,
+      } : entry);
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : "COMMENT DELETE FAILED");
+    } finally {
+      setDeletingCommentId(null);
+    }
+  }
+
   const adminPageCount = Math.max(1, Math.ceil(memes.length / ADMIN_PAGE_SIZE));
   const safeAdminPage = Math.min(adminPage, adminPageCount);
   const adminMemes = memes.slice((safeAdminPage - 1) * ADMIN_PAGE_SIZE, safeAdminPage * ADMIN_PAGE_SIZE);
   const memeSource = (meme: Meme) => gravityUndone
     ? `/api/media/${encodeURIComponent(meme.id)}?reverse=1`
     : meme.url;
+
+  useEffect(() => {
+    if (!adminOpen) return;
+    let active = true;
+    const pageMemes = memes.slice((safeAdminPage - 1) * ADMIN_PAGE_SIZE, safeAdminPage * ADMIN_PAGE_SIZE);
+    Promise.all(pageMemes.map(async (meme) => {
+      const response = await fetch(`/api/memes/${meme.id}/comments`);
+      const items = response.ok ? await response.json() as Comment[] : [];
+      return [meme.id, items] as const;
+    })).then((entries) => {
+      if (active) setAdminComments((items) => ({ ...items, ...Object.fromEntries(entries) }));
+    }).catch(() => undefined);
+    return () => { active = false; };
+  }, [adminOpen, safeAdminPage, memes]);
 
   return (
     <main>
@@ -436,6 +488,19 @@ export default function Home() {
                   <button type="button" disabled={deletingId === meme.id} onClick={() => removeMeme(meme)}>
                     {deletingId === meme.id ? "DELETING..." : "DELETE"}
                   </button>
+                  <div className="admin-comments">
+                    <small>{meme.commentCount ?? 0} {(meme.commentCount ?? 0) === 1 ? "COMMENT" : "COMMENTS"}</small>
+                    {(meme.commentCount ?? 0) > 0 && !adminComments[meme.id] && <p>LOADING COMMENTS...</p>}
+                    {(adminComments[meme.id] ?? []).map((item) => (
+                      <div className="admin-comment" key={item.id}>
+                        <p><b>{item.author}</b> {item.body}</p>
+                        <button type="button" disabled={deletingCommentId === item.id}
+                          onClick={() => removeComment(meme, item)}>
+                          {deletingCommentId === item.id ? "DELETING..." : "DELETE COMMENT"}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </article>
               ))}
             </div>
