@@ -1,6 +1,6 @@
 "use client";
 
-import { type CSSProperties, SyntheticEvent, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { SyntheticEvent, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { upload as uploadBlob } from "@vercel/blob/client";
 import { fileToGif, type CaptionPosition } from "@/lib/gif";
 
@@ -17,7 +17,6 @@ type Meme = {
 };
 type Comment = { id: number; author: string; body: string; createdAt: number };
 const ADMIN_PAGE_SIZE = 5;
-const IDLE_SCATTER_MS = 10_000;
 
 function shuffle<T>(items: T[]) {
   const shuffled = [...items];
@@ -45,20 +44,6 @@ function subscribeToResize(callback: () => void) {
   return () => window.removeEventListener("resize", callback);
 }
 
-function scatterStyle(meme: Meme, index: number) {
-  let hash = 0;
-  for (const character of meme.id) hash = ((hash << 5) - hash + character.charCodeAt(0)) | 0;
-  const value = Math.abs(hash);
-  const row = Math.floor(index / 4);
-  return {
-    "--scatter-x": `${3 + value % 76}%`,
-    "--scatter-x-mobile": `${2 + value % 54}%`,
-    "--scatter-y": `${28 + row * 245 + (value >> 4) % 125}px`,
-    "--scatter-r": `${-11 + (value >> 8) % 23}deg`,
-    "--scatter-scale": `${0.86 + ((value >> 12) % 20) / 100}`,
-  } as CSSProperties;
-}
-
 export default function Home() {
   const [memes, setMemes] = useState<Meme[]>([]);
   const [selected, setSelected] = useState<Meme | null>(null);
@@ -75,7 +60,6 @@ export default function Home() {
   const [captionPosition, setCaptionPosition] = useState<CaptionPosition>("middle");
   const [captionScale, setCaptionScale] = useState(1);
   const [gravityUndone, setGravityUndone] = useState(false);
-  const [organized, setOrganized] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState("");
   const columnCount = useSyncExternalStore(subscribeToResize, getColumnCount, () => 5);
@@ -144,21 +128,6 @@ export default function Home() {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = previousOverflow; };
   }, [adminOpen]);
-  useEffect(() => {
-    if (!organized) return;
-    let timer = window.setTimeout(() => setOrganized(false), IDLE_SCATTER_MS);
-    const stayOrganized = () => {
-      window.clearTimeout(timer);
-      timer = window.setTimeout(() => setOrganized(false), IDLE_SCATTER_MS);
-    };
-    const events: (keyof WindowEventMap)[] = ["pointermove", "pointerdown", "keydown", "scroll", "touchstart"];
-    events.forEach((event) => window.addEventListener(event, stayOrganized, { passive: true }));
-    return () => {
-      window.clearTimeout(timer);
-      events.forEach((event) => window.removeEventListener(event, stayOrganized));
-    };
-  }, [organized]);
-
   function chooseFile(file: File) {
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setCaption("");
@@ -401,22 +370,12 @@ export default function Home() {
           </section>
         </dialog>
       )}
-      <section className={`gallery ${organized ? "organized" : "scattered"}`}
-        style={{
-          gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
-          "--scatter-height": `${Math.max(720, Math.ceil(memes.length / 4) * 245 + 170)}px`,
-        } as CSSProperties}
-        aria-label={organized ? "Climbing fail GIFs" : "Scattered climbing fail GIFs — click to arrange"}>
-        {!organized && <button className="arrange-trigger" type="button" onClick={() => setOrganized(true)}>
-          ARRANGE GIFS
-        </button>}
+      <section className="gallery" style={{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }}
+        aria-label="Climbing fail GIFs">
         {Array.from({ length: columnCount }, (_, column) => (
           <div className="gallery-column" key={column}>
-            {memes.map((meme, index) => ({ meme, index }))
-              .filter(({ index }) => index % columnCount === column)
-              .map(({ meme, index }) => (
-              <button className="tile" key={meme.id} style={organized ? undefined : scatterStyle(meme, index)}
-                onClick={() => setSelected(meme)} aria-label="Open GIF">
+            {memes.filter((_, index) => index % columnCount === column).map((meme) => (
+              <button className="tile" key={meme.id} onClick={() => setSelected(meme)} aria-label="Open GIF">
                 {/* oxlint-disable-next-line next/no-img-element */}
                 <img src={memeSource(meme)} alt="Looping climbing fail" />
                 {meme.latestComment && (
