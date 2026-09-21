@@ -20,7 +20,12 @@ export async function GET() {
     const sql = getDb();
     const uploads = await sql`
       SELECT m.id, m.category, m.filename, m.object_url AS url, m.created_at,
-             COALESCE(e.likes, 0) AS likes
+             COALESCE(e.likes, 0) AS likes,
+             COALESCE((SELECT COUNT(*) FROM comments c WHERE c.meme_id = m.id), 0) AS comment_count,
+             (SELECT c.author FROM comments c WHERE c.meme_id = m.id
+              ORDER BY c.created_at DESC, c.id DESC LIMIT 1) AS latest_comment_author,
+             (SELECT c.body FROM comments c WHERE c.meme_id = m.id
+              ORDER BY c.created_at DESC, c.id DESC LIMIT 1) AS latest_comment_body
       FROM memes m LEFT JOIN engagement e ON e.meme_id = m.id
       ORDER BY m.created_at DESC
     `;
@@ -30,6 +35,11 @@ export async function GET() {
       filename: String(row.filename),
       url: String(row.url),
       likes: Number(row.likes),
+      commentCount: Number(row.comment_count),
+      latestComment: row.latest_comment_body ? {
+        author: String(row.latest_comment_author),
+        body: String(row.latest_comment_body),
+      } : undefined,
       createdAt: Number(row.created_at),
       uploaded: true,
     })));
@@ -52,7 +62,7 @@ export async function POST(request: Request) {
     `;
     return Response.json({
       id: input.id, category: "OTHER", filename, url: input.url,
-      likes: 0, createdAt, uploaded: true,
+      likes: 0, commentCount: 0, createdAt, uploaded: true,
     }, { status: 201 });
   } catch (error) {
     await del(input.url!).catch(() => undefined);

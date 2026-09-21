@@ -10,6 +10,8 @@ type Meme = {
   url: string;
   filename: string;
   likes: number;
+  commentCount?: number;
+  latestComment?: { author: string; body: string };
   createdAt?: number;
   uploaded?: boolean;
 };
@@ -199,6 +201,16 @@ export default function Home() {
     if (!response.ok) return;
     const saved = (await response.json()) as Comment;
     setComments((items) => [...items, saved]);
+    setMemes((items) => items.map((item) => item.id === selected.id ? {
+      ...item,
+      commentCount: (item.commentCount ?? 0) + 1,
+      latestComment: { author: saved.author, body: saved.body },
+    } : item));
+    setSelected((item) => item ? {
+      ...item,
+      commentCount: (item.commentCount ?? 0) + 1,
+      latestComment: { author: saved.author, body: saved.body },
+    } : item);
     event.currentTarget.reset();
   }
 
@@ -314,6 +326,12 @@ export default function Home() {
               <button className="tile" key={meme.id} onClick={() => setSelected(meme)} aria-label="Open GIF">
                 {/* oxlint-disable-next-line next/no-img-element */}
                 <img src={memeSource(meme)} alt="Looping climbing fail" />
+                {meme.latestComment && (
+                  <span className="tile-comment">
+                    <b>{meme.latestComment.author}</b> {meme.latestComment.body}
+                    {(meme.commentCount ?? 0) > 1 && <small>+{(meme.commentCount ?? 1) - 1} MORE</small>}
+                  </span>
+                )}
               </button>
             ))}
           </div>
