@@ -17,6 +17,7 @@ type Meme = {
 };
 type Comment = { id: number; author: string; body: string; createdAt: number };
 const ADMIN_PAGE_SIZE = 5;
+const FONT_MORPH_SELECTOR = "p, small, button, a, label, input, textarea";
 
 function shuffle<T>(items: T[]) {
   const shuffled = [...items];
@@ -128,6 +129,60 @@ export default function Home() {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = previousOverflow; };
   }, [adminOpen]);
+  useEffect(() => {
+    const animations = new Set<Animation>();
+    const animationByElement = new WeakMap<HTMLElement, Animation>();
+    const rootStyle = getComputedStyle(document.documentElement);
+    const resting = rootStyle.getPropertyValue("--font-rest").trim();
+    const squashed = rootStyle.getPropertyValue("--font-squashed").trim();
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const findTarget = (target: EventTarget | null) => {
+      if (!(target instanceof Element)) return null;
+      const element = target.closest(FONT_MORPH_SELECTOR);
+      if (!(element instanceof HTMLElement) || element.closest(".caption-preview")) return null;
+      return element;
+    };
+    const animationFor = (element: HTMLElement) => {
+      const existing = animationByElement.get(element);
+      if (existing) return existing;
+      const animation = element.animate([
+        { fontVariationSettings: resting },
+        { fontVariationSettings: squashed },
+      ], {
+        duration: reducedMotion ? 1 : 1700,
+        delay: reducedMotion ? 0 : 500,
+        easing: "cubic-bezier(.2,.72,.2,1)",
+        fill: "forwards",
+      });
+      animation.pause();
+      animationByElement.set(element, animation);
+      animations.add(animation);
+      return animation;
+    };
+    const startMorph = (event: Event) => {
+      const element = findTarget(event.target);
+      if (element) animationFor(element).play();
+    };
+    const lockMorph = (event: PointerEvent | FocusEvent) => {
+      const element = findTarget(event.target);
+      if (!element) return;
+      if (event.relatedTarget instanceof Node && element.contains(event.relatedTarget)) return;
+      animationByElement.get(element)?.pause();
+    };
+
+    document.addEventListener("pointerover", startMorph);
+    document.addEventListener("pointerout", lockMorph);
+    document.addEventListener("focusin", startMorph);
+    document.addEventListener("focusout", lockMorph);
+    return () => {
+      document.removeEventListener("pointerover", startMorph);
+      document.removeEventListener("pointerout", lockMorph);
+      document.removeEventListener("focusin", startMorph);
+      document.removeEventListener("focusout", lockMorph);
+      animations.forEach((animation) => animation.cancel());
+    };
+  }, []);
   function chooseFile(file: File) {
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setCaption("");

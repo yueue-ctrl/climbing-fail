@@ -14,7 +14,8 @@
   --hand: "Zebba", sans-serif;
   --plain: "Zebba", sans-serif;
   --font-rest: "ROWT" 350, "RONG" 0, "CHON" 0;
-  --font-hover: "ROWT" 760, "RONG" 680, "CHON" 620;
+  --font-title: "ROWT" 1000, "RONG" 0, "CHON" 1000;
+  --font-squashed: "ROWT" 1000, "RONG" 1000, "CHON" 1000;
 }
 
 * { box-sizing: border-box; }
@@ -32,18 +33,6 @@ body {
 }
 button, input, textarea { font: inherit; color: inherit; }
 button, a, label { -webkit-tap-highlight-color: transparent; }
-:where(h1, h2, p, small, button, a, label, input, textarea) {
-  font-variation-settings: var(--font-rest);
-  transition: font-variation-settings .42s cubic-bezier(.2,.75,.2,1);
-}
-:where(h1, h2, p, small, button, a, label, input, textarea):hover,
-:where(button, a, input, textarea):focus-visible {
-  font-variation-settings: var(--font-hover);
-}
-h1:hover { font-variation-settings: "ROWT" 900, "RONG" 1000, "CHON" 760; }
-@media (prefers-reduced-motion: reduce) {
-  :where(h1, h2, p, small, button, a, label, input, textarea) { transition: none; }
-}
 
 header {
   min-height: 100svh;
@@ -433,6 +422,9 @@ h1 span + span { margin-top: .06em; }
   color: var(--ink);
   font: .52rem/1.4 var(--plain);
 }
+
+/* The title stays on its inflated instance; small text is animated in JavaScript. */
+h1, h2 { font-variation-settings: var(--font-title) !important; }
 
 @media (max-width: 600px) {
   header { min-height: 100svh; padding: 45px 14px 38px; gap: 24px; }
