@@ -29,7 +29,6 @@ export default function FontLab() {
   const [specimen, setSpecimen] = useState("Roboto Mono\nZebba");
   const [axes, setAxes] = useState<Axes>({ rowt: 0, rong: 1000, chon: 0 });
   const [motion, setMotion] = useState<MotionMode>("combo1");
-  const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const specimenStyle = { fontVariationSettings: variation(axes) } as CSSProperties;
   const css = `font-variation-settings: ${variation(axes)};`;
@@ -46,9 +45,7 @@ export default function FontLab() {
   }
 
   function copyCss(value = css) {
-    setCopyState("copied");
-    void navigator.clipboard.writeText(value).catch(() => setCopyState("failed"));
-    window.setTimeout(() => setCopyState("idle"), 1400);
+    void navigator.clipboard.writeText(value);
   }
 
   return (
@@ -109,10 +106,7 @@ export default function FontLab() {
           ))}
         </div>
 
-        <button type="button" className={styles.copy} onClick={() => copyCss()}>
-          <code>{css}</code>
-          <span>{copyState === "copied" ? "COPIED" : copyState === "failed" ? "COPY FAILED" : "COPY"}</span>
-        </button>
+        <a className={styles.download} href="/zebba-font-file.zip" download="zebba-font-file.zip">DOWNLOAD FONT FILE</a>
       </section>
 
       <section className={styles.recipesSection}>

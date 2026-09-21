@@ -113,9 +113,7 @@
 .control input::-webkit-slider-thumb { width: 18px; height: 18px; margin-top: -7.5px; appearance: none; border-radius: 50%; background: #111; }
 .control input::-moz-range-track { height: 3px; background: #111; }
 .control input::-moz-range-thumb { width: 18px; height: 18px; border: 0; border-radius: 50%; background: #111; }
-.copy { max-width: 100%; margin-top: 7vh; padding: 0; border: 0; background: transparent; color: #111; cursor: pointer; text-align: center; }
-.copy code { display: block; font: .76rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
-.copy span { display: inline-block; margin-top: 12px; border-bottom: 1px solid currentColor; font-size: .8rem; }
+.download { margin-top: 7vh; padding: 5px 2px; border-bottom: 1px solid currentColor; color: #111; font-size: 1rem; line-height: 1.2; text-decoration: none; }
 
 .recipesSection, .visualTests, .glyphSection { padding: 14vh 5vw; }
 .recipesSection h2, .visualTests h2, .glyphSection h2 {
@@ -221,7 +219,7 @@
   .playground { min-height: 90svh; padding-inline: 18px; }
   .specimen { font-size: 17vw; }
   .controlRow { grid-template-columns: 1fr; gap: 24px; }
-  .copy code { font-size: .62rem; }
+  .download { font-size: .88rem; }
   .recipesSection, .visualTests { padding-inline: 20px; }
   .recipes { row-gap: 10vh; }
   .recipeWord { min-height: 230px; font-size: clamp(1.25rem, 6.5vw, 3rem); }
