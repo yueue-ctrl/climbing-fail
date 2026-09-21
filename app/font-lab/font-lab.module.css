@@ -28,22 +28,6 @@
   letter-spacing: -.035em;
 }
 
-.origin {
-  min-height: 115svh;
-  padding: 11vh 7vw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6vh;
-  text-align: center;
-}
-.originStep { display: flex; flex-direction: column; align-items: center; }
-.originStep span { margin-bottom: 16px; font-size: .8rem; letter-spacing: .08em; }
-.originStep strong { font: clamp(3.8rem, 8vw, 9rem)/.86 "Zebba", sans-serif; }
-.originStep small { margin-top: 20px; font: 1rem/1.25 "Zebba", sans-serif; }
-.originArrow { font-size: 2rem; }
-
 .playground {
   min-height: 100svh;
   padding: 10vh 5vw 7vh;
@@ -296,8 +280,6 @@
   .axisColumn { text-align: center; }
   .axisColumn > p { margin-bottom: 28px; }
   .axisSamples { align-items: center; }
-  .origin { min-height: 100svh; }
-  .originStep strong { font-size: clamp(3rem, 15vw, 5rem); }
   .recipesSection { padding-inline: 20px; }
   .recipes { grid-template-columns: 1fr; row-gap: 10vh; }
   .recipeWord { min-height: 180px; }

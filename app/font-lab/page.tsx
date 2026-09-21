@@ -8,9 +8,9 @@ type AxisKey = keyof Axes;
 type Recipe = { name: string; use: string; text: string; axes: Axes };
 
 const AXES: Array<{ key: AxisKey; title: string; stops: number[] }> = [
-  { key: "rowt", title: "Weight", stops: [0, 100, 350, 500, 700, 1000] },
-  { key: "rong", title: "Ronghua", stops: [0, 250, 500, 750, 1000] },
-  { key: "chon", title: "Inflation", stops: [0, 250, 500, 750, 1000] },
+  { key: "rowt", title: "Weight", stops: [100, 500, 750, 1000] },
+  { key: "rong", title: "Ronghua", stops: [250, 500, 750, 1000] },
+  { key: "chon", title: "Inflation", stops: [250, 500, 750, 1000] },
 ];
 
 const UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -18,12 +18,11 @@ const LOWERCASE = "abcdefghijklmnopqrstuvwxyz".split("");
 const NUMBERS = "0123456789".split("");
 
 const RECIPES: Recipe[] = [
-  { name: "Soft title", use: "Headlines / short sentences", text: "Afterglow", axes: { rowt: 350, rong: 0, chon: 500 } },
-  { name: "Light air", use: "Large editorial display", text: "Squirrels", axes: { rowt: 100, rong: 0, chon: 850 } },
-  { name: "Dense label", use: "Labels / small emphatic type", text: "GOOD BAD WEIRD", axes: { rowt: 800, rong: 500, chon: 0 } },
-  { name: "Ronghua", use: "Expressive notes / captions", text: "Something", axes: { rowt: 350, rong: 750, chon: 250 } },
-  { name: "Heavy poster", use: "Posters / oversized words", text: "ZEBBA", axes: { rowt: 1000, rong: 300, chon: 650 } },
-  { name: "Full pressure", use: "Short accents only", text: "LOUD", axes: { rowt: 1000, rong: 1000, chon: 1000 } },
+  { name: "Default", use: "RONG", text: "Zebba", axes: { rowt: 0, rong: 1000, chon: 0 } },
+  { name: "CHON 500", use: "Half inflation", text: "Afterglow", axes: { rowt: 0, rong: 0, chon: 500 } },
+  { name: "CHON 1000", use: "Full inflation", text: "Squirrels", axes: { rowt: 0, rong: 0, chon: 1000 } },
+  { name: "RONG + CHON 500", use: "Ronghua with half inflation", text: "Something", axes: { rowt: 0, rong: 1000, chon: 500 } },
+  { name: "RONG + CHON 1000", use: "Ronghua with full inflation", text: "LOUD", axes: { rowt: 0, rong: 1000, chon: 1000 } },
 ];
 
 function variation(axes: Axes) {
@@ -32,7 +31,7 @@ function variation(axes: Axes) {
 
 function isolatedAxis(key: AxisKey, value: number): Axes {
   return {
-    rowt: key === "rowt" ? value : 350,
+    rowt: key === "rowt" ? value : 0,
     rong: key === "rong" ? value : 0,
     chon: key === "chon" ? value : 0,
   };
@@ -40,7 +39,7 @@ function isolatedAxis(key: AxisKey, value: number): Axes {
 
 export default function FontLab() {
   const [specimen, setSpecimen] = useState("Something");
-  const [axes, setAxes] = useState<Axes>({ rowt: 350, rong: 0, chon: 500 });
+  const [axes, setAxes] = useState<Axes>({ rowt: 0, rong: 1000, chon: 0 });
   const [size, setSize] = useState(140);
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
@@ -68,27 +67,7 @@ export default function FontLab() {
         <div className={styles.heroLine} style={{ fontVariationSettings: variation(axes) }}>
           It&apos;s a feature, not a bug
         </div>
-        <p className={styles.micro}>Designed from a Roboto Mono base · ROWT / RONG / CHON</p>
-      </section>
-
-      <section className={styles.origin}>
-        <div className={styles.originStep}>
-          <span>BASE</span>
-          <strong style={{ fontVariationSettings: '"ROWT" 350, "RONG" 0, "CHON" 0' }}>Roboto Mono</strong>
-          <small>unmodified</small>
-        </div>
-        <div className={styles.originArrow}>↓</div>
-        <div className={styles.originStep}>
-          <span>ROWT</span>
-          <strong style={{ fontVariationSettings: '"ROWT" 1000, "RONG" 0, "CHON" 0' }}>Zebba weight</strong>
-          <small>light 100 · regular 350 · bold 1000</small>
-        </div>
-        <div className={styles.originArrow}>↓</div>
-        <div className={styles.originStep}>
-          <span>CHON + RONG</span>
-          <strong style={{ fontVariationSettings: '"ROWT" 700, "RONG" 500, "CHON" 700' }}>Inflate & transform</strong>
-          <small>mix the axes to make the typeface yours</small>
-        </div>
+        <p className={styles.micro}>Default · ROWT 0 / RONG 1000 / CHON 0</p>
       </section>
 
       <section className={styles.playground}>
@@ -200,10 +179,10 @@ export default function FontLab() {
 
       <section className={styles.inUse}>
         <h2>In use</h2>
-        <div className={styles.usageHeadline} style={{ fontVariationSettings: '"ROWT" 350, "RONG" 0, "CHON" 650' }}>
+        <div className={styles.usageHeadline} style={{ fontVariationSettings: '"ROWT" 0, "RONG" 1000, "CHON" 500' }}>
           Xylo Phonic Rhythms
         </div>
-        <div className={styles.usageColumns} style={{ fontVariationSettings: '"ROWT" 500, "RONG" 180, "CHON" 100' }}>
+        <div className={styles.usageColumns} style={{ fontVariationSettings: '"ROWT" 0, "RONG" 1000, "CHON" 0' }}>
           <p>Zebba begins with the familiar rhythm of Roboto Mono, then opens into weight, inflation and transformation. Use restrained values for reading and stronger combinations for display.</p>
           <p>Every axis can move continuously between its minimum and maximum. The same word can become quiet, soft, dense, swollen or deliberately strange without changing fonts.</p>
           <p>Copy a recipe as a starting point, or tune the sliders until the form fits your layout. Shorter words can usually carry more pressure than long paragraphs.</p>
@@ -219,9 +198,9 @@ export default function FontLab() {
       </section>
 
       <footer className={styles.footer}>
-        <span>ROWT 0 / 350 / 1000</span>
-        <span>RONG 0 / 0 / 1000</span>
-        <span>CHON 0 / 0 / 1000</span>
+        <span>ROWT 0–1000</span>
+        <span>RONG 0–1000</span>
+        <span>CHON 0–1000</span>
       </footer>
     </main>
   );
