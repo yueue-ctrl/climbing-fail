@@ -166,22 +166,21 @@
 .axisMode4 { animation-name: combo4; animation-direction: alternate-reverse; }
 .axisMode5 { animation-name: combo5; }
 
-.multiOutline > div { position: relative; min-height: 40vw; display: grid; place-items: center; }
-.multiOutline .outlineWord {
-  grid-area: 1 / 1;
+.outlineTests { align-items: center; gap: 2vh; }
+.outlineTests > div {
   color: transparent;
   -webkit-text-stroke: clamp(1px, .13vw, 2.5px) #111;
-  font-size: clamp(6rem, 17vw, 20rem);
+  font-size: clamp(4rem, 12vw, 14rem);
   line-height: .75;
   text-align: center;
+  white-space: nowrap;
 }
-.multiOutline .outlineWord:nth-child(2) { transform: translate(-1.2vw, -.8vw); }
-.multiOutline .outlineWord:nth-child(3) { transform: translate(1.1vw, .9vw); }
-.multiOutline .outlineWord:nth-child(4) { transform: translate(-2vw, 1.5vw); }
-.multiOutline .outlineWord:nth-child(5) { transform: translate(2vw, -1.4vw); }
+.outlineOne { animation: combo1 4.8s ease-in-out infinite alternate; }
+.outlineTwo { animation: combo2 5.4s ease-in-out infinite alternate-reverse; }
+.outlineThree { animation: combo5 5s ease-in-out infinite alternate; }
 
 .differenceTest > div { position: relative; min-height: 54vw; isolation: isolate; }
-.differenceTest .differenceWord {
+.differenceTest span {
   position: absolute;
   width: 68vw;
   color: #000;
@@ -190,15 +189,19 @@
   letter-spacing: -.06em;
   text-align: center;
 }
-.differenceTest .differenceWord:first-child { left: 1vw; top: 4vw; }
-.differenceTest .differenceWord:last-child { right: 1vw; top: 14vw; color: #000; mix-blend-mode: difference; }
+.differenceTest span:first-child { left: 1vw; top: 4vw; animation: combo1 6s ease-in-out infinite alternate; }
+.differenceTest span:last-child { right: 1vw; top: 14vw; color: #000; animation: combo4 6s ease-in-out infinite alternate-reverse; }
 
-.tightLeading > div { display: flex; flex-direction: column; align-items: center; font-size: clamp(7rem, 19vw, 22rem); line-height: .5; letter-spacing: -.06em; }
-.tightTracking > .axisWord { white-space: nowrap; font-size: clamp(5rem, 15vw, 17rem); line-height: .72; letter-spacing: -.19em; text-align: center; }
+.tightLeading > div { display: flex; flex-direction: column; align-items: center; font-size: clamp(7rem, 19vw, 22rem); line-height: .5; letter-spacing: -.06em; animation: combo4 6s ease-in-out infinite alternate; }
+.tightTracking > div { white-space: nowrap; font-size: clamp(5rem, 15vw, 17rem); line-height: .72; letter-spacing: -.19em; text-align: center; animation: combo5 6s ease-in-out infinite alternate; }
 .verticalTest > .axisWord { min-height: 65vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .verticalTest .axisLetter { display: block; margin-bottom: .06em; font-size: clamp(4rem, 8vw, 9rem); line-height: .84; letter-spacing: 0; }
 .mixedTest > div { min-height: 65vh; display: grid; grid-template-columns: 1fr 1fr; place-items: center; gap: 2vw; }
-.mixedTest .axisWord { font-size: clamp(4rem, 10vw, 12rem); line-height: .68; }
+.mixedTest span { font-size: clamp(4rem, 10vw, 12rem); line-height: .68; }
+.mixedTest span:nth-child(1) { animation: combo1 4.2s ease-in-out infinite alternate; }
+.mixedTest span:nth-child(2) { animation: combo2 5s ease-in-out infinite alternate; }
+.mixedTest span:nth-child(3) { animation: combo3 5.5s ease-in-out infinite alternate; }
+.mixedTest span:nth-child(4) { animation: combo5 4.8s ease-in-out infinite alternate-reverse; }
 
 .glyphSection { min-height: 100svh; }
 .glyphRow { max-width: 1720px; margin: 8vh auto 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; font-variation-settings: "ROWT" 350, "RONG" 1000, "CHON" 0; }

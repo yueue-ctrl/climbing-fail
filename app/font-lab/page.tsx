@@ -136,26 +136,28 @@ export default function FontLab() {
       <section className={styles.visualTests}>
         <h2>VISUAL TESTS</h2>
 
-        <article className={styles.multiOutline} aria-label="MULTIPLE OUTLINES">
-          <div>{[0, 1, 2, 3, 4].map((layer) => <AxisWord className={styles.outlineWord} key={layer} layer={layer} text="FALLING UP" />)}</div>
-          <p>MULTIPLE OUTLINES</p>
+        <article className={styles.outlineTests} aria-label="OUTLINE TESTS">
+          <div className={styles.outlineOne}>FALL FIRST</div>
+          <div className={styles.outlineTwo}>NO GRAVITY</div>
+          <div className={styles.outlineThree}>UP AGAIN</div>
+          <p>OUTLINE AXIS TESTS</p>
         </article>
 
         <article className={styles.differenceTest}>
           <div aria-label="UP DOWN">
-            <AxisWord className={styles.differenceWord} text="UP" />
-            <AxisWord className={styles.differenceWord} layer={2} text="DOWN" />
+            <span>UP</span>
+            <span>DOWN</span>
           </div>
           <p>FILL DIFFERENCE</p>
         </article>
 
         <article className={styles.tightLeading}>
-          <div><AxisWord text="NO" /><AxisWord layer={1} text="FEET" /><AxisWord layer={2} text="NO" /><AxisWord layer={3} text="PROBLEM" /></div>
+          <div><span>NO</span><span>FEET</span><span>NO</span><span>PROBLEM</span></div>
           <p>TIGHT LINE HEIGHT</p>
         </article>
 
         <article className={styles.tightTracking}>
-          <AxisWord text="HOLDONTIGHT" />
+          <div>HOLDONTIGHT</div>
           <p>TIGHT LETTER SPACING</p>
         </article>
 
@@ -165,7 +167,7 @@ export default function FontLab() {
         </article>
 
         <article className={styles.mixedTest}>
-          <div><AxisWord text="UP" /><AxisWord layer={1} text="DOWN" /><AxisWord layer={2} text="SIDEWAYS" /><AxisWord layer={3} text="AGAIN" /></div>
+          <div><span>UP</span><span>DOWN</span><span>SIDEWAYS</span><span>AGAIN</span></div>
           <p>FIVE AXIS COMBINATIONS</p>
         </article>
       </section>
