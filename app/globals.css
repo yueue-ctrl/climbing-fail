@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @font-face {
-  font-family: "Testtype Trackpad";
-  src: url("/fonts/testtype-trackpad.otf") format("opentype");
+  font-family: "Zebba";
+  src: url("/fonts/zebba.otf") format("opentype");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -11,17 +11,39 @@
 :root {
   --paper: #fff;
   --ink: #151515;
-  --hand: "Testtype Trackpad", cursive;
-  --plain: "Testtype Trackpad", cursive;
+  --hand: "Zebba", sans-serif;
+  --plain: "Zebba", sans-serif;
+  --font-rest: "ROWT" 350, "RONG" 0, "CHON" 0;
+  --font-hover: "ROWT" 760, "RONG" 680, "CHON" 620;
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; min-width: 320px; min-height: 100%; color: var(--ink); font-family: var(--plain); }
+html, body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100%;
+  color: var(--ink);
+  font-family: var(--plain);
+  font-variation-settings: var(--font-rest);
+  font-synthesis: none;
+}
 body {
   background-color: var(--paper);
 }
 button, input, textarea { font: inherit; color: inherit; }
 button, a, label { -webkit-tap-highlight-color: transparent; }
+:where(h1, h2, p, small, button, a, label, input, textarea) {
+  font-variation-settings: var(--font-rest);
+  transition: font-variation-settings .42s cubic-bezier(.2,.75,.2,1);
+}
+:where(h1, h2, p, small, button, a, label, input, textarea):hover,
+:where(button, a, input, textarea):focus-visible {
+  font-variation-settings: var(--font-hover);
+}
+h1:hover { font-variation-settings: "ROWT" 900, "RONG" 1000, "CHON" 760; }
+@media (prefers-reduced-motion: reduce) {
+  :where(h1, h2, p, small, button, a, label, input, textarea) { transition: none; }
+}
 
 header {
   min-height: 100svh;
