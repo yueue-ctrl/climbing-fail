@@ -84,7 +84,7 @@ h1 span + span { margin-top: .06em; }
   to { font-variation-settings: "ROWT" 1000, "RONG" 1000, "CHON" 0; }
 }
 .scheme-two-hover {
-  font-variation-settings: "ROWT" 0, "RONG" 999, "CHON" 0;
+  font-variation-settings: "ROWT" 350, "RONG" 1000, "CHON" 0;
   transition: font-variation-settings .48s cubic-bezier(.2,.72,.2,1);
 }
 .scheme-two-hover:hover,
