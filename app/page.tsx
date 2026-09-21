@@ -24,7 +24,11 @@ function GravityTitleLine({ text }: { text: string }) {
   return (
     <span className="gravity-line" aria-label={text}>
       {Array.from(text).map((character, index) => (
-        <span className={character === " " ? "gravity-letter gravity-space" : "gravity-letter"} aria-hidden="true" key={`${character}-${index}`}>
+        <span
+          className={character === " " ? "gravity-letter gravity-space" : character === ":" ? "gravity-letter gravity-colon" : "gravity-letter"}
+          aria-hidden="true"
+          key={`${character}-${index}`}
+        >
           {character === " " ? "\u00a0" : character}
         </span>
       ))}
